@@ -10,8 +10,7 @@ export const DEFAULT_PROMO: BrochurePromoData = {
   title: "Promo Spesial Peluncuran DickyWeb",
   tagline: "Diskon Hingga 40% untuk Pembuatan Website Bisnis & Toko Online",
   discountBadge: "Hemat 40%",
-  brochureImageUrl:
-    "https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=1200&q=80",
+  brochureImageUrl: "/images/brochures/promo-launch.jpg",
   validUntil: "30 November 2026",
   targetPackage: "Semua Paket Website",
   notes: "Desain brosur ini dapat diubah langsung melalui halaman /admin.",
@@ -33,7 +32,16 @@ export function getActivePromo(): BrochurePromoData {
   try {
     const raw = localStorage.getItem(PROMO_STORAGE_KEY);
     if (!raw) return DEFAULT_PROMO;
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed.brochureImageUrl || parsed.brochureImageUrl.includes("images.unsplash.com")) {
+      parsed.brochureImageUrl = DEFAULT_PROMO.brochureImageUrl;
+      try {
+        localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(parsed));
+      } catch {
+        // Ignore
+      }
+    }
+    return parsed;
   } catch (e) {
     console.error("Failed to read active promo from storage", e);
     return DEFAULT_PROMO;
@@ -102,6 +110,17 @@ export function getPortfolioList(): PortfolioItem[] {
             liveUrl: "https://kopikenangan.com",
           };
         }
+
+        // Sinkronkan gambar Unsplash lama ke aset lokal berkecepatan tinggi Vercel CDN
+        const matchingDefault = portfolioData.find((d) => d.id === item.id);
+        if (
+          matchingDefault &&
+          (!item.image || item.image.includes("images.unsplash.com"))
+        ) {
+          needsSync = true;
+          updatedItem.image = matchingDefault.image;
+        }
+
         return updatedItem;
       });
 
@@ -204,8 +223,7 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     label: "Foto 1 (Kiri Atas / Besar)",
     positionDescription: "Posisi Kiri Atas (Vertikal Tinggi)",
     alt: "Tim Developer & Konsultan IT DickyWeb",
-    imageUrl:
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/images/hero/hero-1.jpg",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -218,8 +236,7 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     label: "Foto 2 (Kanan Atas)",
     positionDescription: "Posisi Kanan Atas (Kompak)",
     alt: "Eksekutif & Klien Bisnis DickyWeb",
-    imageUrl:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/images/hero/hero-2.jpg",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -232,8 +249,7 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     label: "Foto 3 (Kiri Bawah)",
     positionDescription: "Posisi Kiri Bawah (Sedang)",
     alt: "Konsultan & Tech Lead DickyWeb",
-    imageUrl:
-      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/images/hero/hero-3.jpg",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -246,8 +262,7 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     label: "Foto 4 (Kanan Bawah)",
     positionDescription: "Posisi Kanan Bawah (Vertikal Tinggi)",
     alt: "Laptop Pengembangan Website Modern & SEO Ready",
-    imageUrl:
-      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "/images/hero/hero-4.jpg",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -274,8 +289,17 @@ export function getHeroCollage(): HeroCollageSlot[] {
     if (!raw) return DEFAULT_HERO_COLLAGE;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length === 4) {
-      memoryHeroCollageCache = parsed;
-      return parsed;
+      const sanitized = parsed.map((slot: HeroCollageSlot, idx: number) => {
+        if (!slot.imageUrl || slot.imageUrl.includes("images.unsplash.com")) {
+          return {
+            ...slot,
+            imageUrl: DEFAULT_HERO_COLLAGE[idx]?.imageUrl || `/images/hero/hero-${idx + 1}.jpg`,
+          };
+        }
+        return slot;
+      });
+      memoryHeroCollageCache = sanitized;
+      return sanitized;
     }
     return DEFAULT_HERO_COLLAGE;
   } catch (e) {
@@ -295,14 +319,23 @@ export async function getHeroCollageFromDB(): Promise<HeroCollageSlot[]> {
   try {
     const idbData = await getIdbItem<HeroCollageSlot[]>(HERO_COLLAGE_STORAGE_KEY);
     if (Array.isArray(idbData) && idbData.length === 4) {
-      memoryHeroCollageCache = idbData;
+      const sanitized = idbData.map((slot: HeroCollageSlot, idx: number) => {
+        if (!slot.imageUrl || slot.imageUrl.includes("images.unsplash.com")) {
+          return {
+            ...slot,
+            imageUrl: DEFAULT_HERO_COLLAGE[idx]?.imageUrl || `/images/hero/hero-${idx + 1}.jpg`,
+          };
+        }
+        return slot;
+      });
+      memoryHeroCollageCache = sanitized;
       // Sinkronkan ke localStorage jika muat
       try {
-        localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(idbData));
+        localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(sanitized));
       } catch {
         // Abaikan jika kuota localStorage habis, data sudah aman di IndexedDB
       }
-      return idbData;
+      return sanitized;
     }
   } catch (e) {
     console.warn("Gagal membaca hero collage dari IndexedDB:", e);
