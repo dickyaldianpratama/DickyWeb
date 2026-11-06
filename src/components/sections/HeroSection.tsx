@@ -5,7 +5,7 @@ import Image from "next/image";
 import { siteConfig } from "@/data/siteConfig";
 import { Button } from "../ui/Button";
 import { createWhatsAppLink } from "@/lib/whatsapp";
-import { ArrowUpRight, MessageCircle, ImageIcon } from "lucide-react";
+import { ArrowUpRight, MessageCircle, ImageIcon, BadgeCheck } from "lucide-react";
 import {
   getActivePromo,
   getActivePromoFromCloud,
@@ -92,9 +92,10 @@ export const HeroSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           {/* Kolom Kiri: Copywriting & Value Proposition (Sesuai Referensi Gambar) */}
           <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
-            {/* Tagline / Promo Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/70 text-[#007DFE] text-xs font-semibold tracking-wide border border-blue-200/50">
-              <span>Jasa Pembuatan Website Modern #1 di Indonesia</span>
+            {/* Tagline / Trust Badge Pill */}
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-blue-50/90 sm:bg-blue-100/70 text-[#007DFE] text-[11px] sm:text-xs font-semibold tracking-wide border border-blue-200/60 shadow-2xs backdrop-blur-xs max-w-full">
+              <BadgeCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white fill-emerald-500 shrink-0 drop-shadow-2xs" />
+              <span>Jasa Pembuatan Website Terpercaya</span>
             </div>
 
             {/* Headline Utama */}
