@@ -22,9 +22,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 border-b border-solid transition-[background-color,border-color,padding,box-shadow] duration-300 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-xl shadow-sm border-slate-200/90 py-2.5 sm:py-3"
+      className={`fixed top-0 left-0 right-0 z-40 border-b border-solid transition-[background-color,border-color,padding,box-shadow] duration-200 ${
+        mobileMenuOpen
+          ? "bg-white border-slate-200 shadow-none py-3 sm:py-3.5"
+          : isScrolled
+          ? "bg-white/95 backdrop-blur-xl shadow-xs border-slate-200/90 py-2.5 sm:py-3"
           : "bg-white/95 backdrop-blur-md shadow-xs border-slate-200/90 py-3.5 sm:py-4"
       }`}
     >
@@ -90,7 +92,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-xl border-b border-slate-200 px-6 py-6 animate-in slide-in-from-top-4 duration-300 shadow-xl">
+        <div className="md:hidden bg-white border-t border-b border-slate-200/80 px-6 py-6 shadow-none max-h-[calc(100vh-70px)] overflow-y-auto">
           <nav className="flex flex-col gap-4 text-base font-medium text-slate-700">
             {siteConfig.navigation.map((item) => (
               <a
