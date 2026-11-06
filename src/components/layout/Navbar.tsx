@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         mobileMenuOpen
-          ? "bg-white/85 backdrop-blur-2xl border-b border-slate-200/50 shadow-xs"
+          ? "bg-transparent border-none shadow-none"
           : isScrolled
           ? "bg-white/95 backdrop-blur-xl shadow-xs border-b border-slate-200/90"
           : "bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200/90"
@@ -50,9 +50,19 @@ export const Navbar: React.FC = () => {
     >
       {/* Top Navbar Bar */}
       <div
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 transition-[padding] duration-200 ${
-          mobileMenuOpen ? "border-b border-slate-200/40" : ""
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 transition-all duration-200 ${
+          mobileMenuOpen
+            ? "bg-white/80 backdrop-blur-xl border-none shadow-none rounded-b-2xl"
+            : ""
         }`}
+        style={
+          mobileMenuOpen
+            ? {
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+              }
+            : undefined
+        }
       >
         <div className="flex items-center justify-between">
           {/* Brand Logo DickyWeb */}
@@ -117,39 +127,54 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu: Glassmorphism Card (Frosted Semi-Transparan sesuai gambar referensi) */}
+      {/* Mobile Drawer Menu: Floating Glassmorphism Card dengan sudut beradius */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/75 backdrop-blur-2xl border-b border-slate-200/50 rounded-b-3xl px-6 pt-4 pb-6 shadow-xl shadow-slate-900/5 max-h-[calc(100vh-80px)] overflow-y-auto">
-          <nav className="flex flex-col gap-3.5 text-base font-medium text-slate-800">
-            {siteConfig.navigation.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-[#007DFE] transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-            <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-3">
-              <a
-                href={createWhatsAppLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Button
-                  variant="primary"
-                  size="md"
-                  className="w-full gap-2 shadow-md py-3 font-semibold"
-                >
-                  Konsultasi WhatsApp
-                  <ArrowUpRight className="w-4 h-4" />
-                </Button>
-              </a>
+        <>
+          {/* Backdrop transparan lembut di belakang card glass */}
+          <div
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-xs -z-10 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          <div className="md:hidden px-3.5 pt-2 pb-5 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div
+              className="bg-white/65 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-slate-900/10 p-5 sm:p-6 max-h-[calc(100vh-90px)] overflow-y-auto"
+              style={{
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+              }}
+            >
+              <nav className="flex flex-col gap-3 text-base font-semibold text-slate-800">
+                {siteConfig.navigation.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="py-1.5 px-2 rounded-xl hover:text-[#007DFE] hover:bg-white/40 transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+                <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-3">
+                  <a
+                    href={createWhatsAppLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="primary"
+                      size="md"
+                      className="w-full justify-center shadow-lg shadow-blue-500/25 py-3 font-semibold rounded-2xl"
+                    >
+                      Konsultasi WhatsApp
+                    </Button>
+                  </a>
+                </div>
+              </nav>
             </div>
-          </nav>
-        </div>
+          </div>
+        </>
       )}
     </header>
   );
