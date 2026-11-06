@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { siteConfig } from "@/data/siteConfig";
 
 export const Preloader: React.FC = () => {
   const [progress, setProgress] = useState(0);
@@ -63,28 +62,22 @@ export const Preloader: React.FC = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-96 sm:h-96 bg-blue-400/12 rounded-full blur-3xl pointer-events-none animate-pulse" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
 
-          {/* Konten Utama: Gabungan Logo DickyWeb & Animasi Loading */}
+          {/* Konten Utama: Bulatan Ikon DickyWeb & Animasi Loading */}
           <div className="relative z-10 flex flex-col items-center justify-center px-4">
-            {/* Wadah Kartu Logo dengan Orbit Tech Rings */}
+            {/* Wadah Bulat Ikon dengan Orbit Tech Rings */}
             <div className="relative flex items-center justify-center">
-              {/* Ring Luar Putar Orbital 1 (Dashed Tech Ring) */}
-              <div
-                className="absolute -inset-5 sm:-inset-6 border border-dashed border-blue-300/40 pointer-events-none animate-[spin_16s_linear_infinite]"
-                style={{ borderRadius: "2.5rem" }}
-              />
+              {/* Ring Luar Putar Orbital 1 (Dashed Circular Tech Ring) */}
+              <div className="absolute -inset-4 sm:-inset-5 rounded-full border border-dashed border-blue-400/40 pointer-events-none animate-[spin_12s_linear_infinite]" />
 
               {/* Ring Luar Putar Orbital 2 (Accent Glow Ring Berlawanan Arah) */}
-              <div
-                className="absolute -inset-2.5 sm:-inset-3 border border-t-[#007DFE]/60 border-r-transparent border-b-[#00B4D8]/60 border-l-transparent pointer-events-none animate-[spin_8s_linear_infinite_reverse]"
-                style={{ borderRadius: "2.25rem" }}
-              />
+              <div className="absolute -inset-2 sm:-inset-2.5 rounded-full border-2 border-t-[#007DFE] border-r-transparent border-b-[#00B4D8] border-l-transparent pointer-events-none animate-[spin_6s_linear_infinite_reverse]" />
 
-              {/* Kartu Utama Logo DickyWeb */}
+              {/* Bulatan Putih Bersih Khusus Ikon Logo DickyWeb (Tanpa Teks Tambahan) */}
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.85, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.45, ease: "easeOut" }}
-                className="relative px-6 py-5 sm:px-8 sm:py-6 rounded-3xl bg-white/95 backdrop-blur-md border border-slate-100/90 shadow-[0_16px_50px_rgba(0,125,254,0.12)] flex flex-col items-center justify-center overflow-hidden"
+                className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white/95 backdrop-blur-md border border-slate-100 shadow-[0_12px_45px_rgba(0,125,254,0.18)] flex items-center justify-center overflow-hidden"
               >
                 {/* Efek Kilau Cahaya (Light Sheen / Glare Beam) Melintas */}
                 <motion.div
@@ -99,38 +92,30 @@ export const Preloader: React.FC = () => {
                   }}
                 />
 
-                {/* Logo DickyWeb dengan Efek Mengambang Lembut */}
+                {/* Ikon DickyWeb (Emblem Bersih, Jelas, & Beresolusi Tinggi) */}
                 <motion.div
-                  animate={{ y: [0, -3, 0] }}
+                  animate={{ y: [0, -3, 0], scale: [1, 1.02, 1] }}
                   transition={{
                     repeat: Infinity,
-                    duration: 3,
+                    duration: 2.8,
                     ease: "easeInOut",
                   }}
-                  className="relative w-44 sm:w-52 h-12 sm:h-14 flex items-center justify-center"
+                  className="relative w-[72px] h-[72px] sm:w-[84px] sm:h-[84px] flex items-center justify-center z-10"
                 >
                   <Image
-                    src={siteConfig.logoUrl}
-                    alt={siteConfig.brandName}
-                    width={210}
-                    height={55}
-                    className="object-contain"
+                    src="/images/logo/dickyweb-icon.png"
+                    alt="DickyWeb Icon"
+                    width={90}
+                    height={90}
+                    className="w-full h-full object-contain drop-shadow-sm"
                     priority
                   />
                 </motion.div>
-
-                {/* Slogan Pill Badge */}
-                <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/90 border border-blue-100/70">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#007DFE] animate-pulse" />
-                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-700 tracking-wider font-poppins">
-                    {siteConfig.tagline}
-                  </span>
-                </div>
               </motion.div>
             </div>
 
             {/* Bagian Progress Bar & Status Text */}
-            <div className="mt-8 w-60 sm:w-72 flex flex-col items-center space-y-2.5">
+            <div className="mt-8 w-56 sm:w-64 flex flex-col items-center space-y-2.5">
               {/* Progress Track */}
               <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/60 shadow-inner">
                 <motion.div
