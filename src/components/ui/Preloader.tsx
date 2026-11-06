@@ -88,67 +88,53 @@ export const Preloader: React.FC = () => {
                   </linearGradient>
                 </defs>
 
-                {/* Track Lingkaran Latar Belakang */}
+                {/* Track Lingkaran Latar Belakang (Transparan Biru Lembut) */}
                 <circle
                   cx="50"
                   cy="50"
                   r={strokeRadius}
                   fill="none"
-                  stroke="#F1F5F9"
+                  stroke="rgba(0, 125, 254, 0.12)"
                   strokeWidth="3"
                 />
 
-                {/* Active Circular Progress Stroke */}
+                {/* Active Circular Progress Stroke (Gradien Biru Terang & Bercahaya) */}
                 <circle
                   cx="50"
                   cy="50"
                   r={strokeRadius}
                   fill="none"
                   stroke="url(#preloader-blue-grad)"
-                  strokeWidth="3.2"
+                  strokeWidth="3.5"
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
-                  className="transition-[stroke-dashoffset] duration-75 ease-out"
+                  className="transition-[stroke-dashoffset] duration-75 ease-out drop-shadow-[0_0_8px_rgba(0,125,254,0.45)]"
                 />
               </svg>
 
-              {/* Bulatan Kartu Tengah Khusus Ikon Logo DickyWeb (Kompak & Bersih) */}
+              {/* Ikon Emblem Logo DickyWeb Langsung Terapung di Tengah Cincin Biru (Tanpa Bulatan Putih) */}
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.85, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="relative w-[72px] h-[72px] sm:w-[84px] sm:h-[84px] rounded-full bg-white/95 backdrop-blur-md border border-slate-100 shadow-[0_8px_30px_rgba(0,125,254,0.12)] flex items-center justify-center overflow-hidden z-20"
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="relative z-20 flex items-center justify-center pointer-events-none"
               >
-                {/* Kilau Cahaya (Sheen Beam) Berulang Secara Halus */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none z-20"
-                  initial={{ x: "-150%" }}
-                  animate={{ x: "150%" }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.2,
-                    ease: "easeInOut",
-                    repeatDelay: 0.8,
-                  }}
-                />
-
-                {/* Ikon Emblem Logo DickyWeb */}
-                <motion.div
-                  animate={{ y: [0, -2, 0], scale: [1, 1.02, 1] }}
+                  animate={{ y: [0, -2.5, 0], scale: [1, 1.03, 1] }}
                   transition={{
                     repeat: Infinity,
                     duration: 2.6,
                     ease: "easeInOut",
                   }}
-                  className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center z-10"
+                  className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center"
                 >
                   <Image
                     src="/images/logo/dickyweb-icon.png"
                     alt="DickyWeb Icon"
-                    width={56}
-                    height={56}
-                    className="w-full h-full object-contain drop-shadow-2xs"
+                    width={60}
+                    height={60}
+                    className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,125,254,0.3)]"
                     priority
                   />
                 </motion.div>
