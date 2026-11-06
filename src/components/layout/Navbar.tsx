@@ -120,41 +120,53 @@ export const Navbar: React.FC = () => {
 
           {/* Floating Glassmorphism Card right below the fixed top header */}
           <div className="relative pt-[62px] sm:pt-[70px] px-3.5 pb-6">
+            {/* Outer Glass Shell: Menjaga bentuk rounded-3xl, border, dan glassmorphism tetap statis tanpa seam glitch */}
             <div
-              className="bg-white/70 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-slate-900/15 p-5 sm:p-6 max-h-[calc(100vh-85px)] overflow-y-auto overscroll-contain transition-all duration-200"
+              className="bg-white/70 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-slate-900/10 overflow-hidden isolate"
               style={{
                 backdropFilter: "blur(24px)",
                 WebkitBackdropFilter: "blur(24px)",
+                transform: "translateZ(0)",
+                WebkitTransform: "translateZ(0)",
               }}
             >
-              <nav className="flex flex-col gap-3 text-base font-semibold text-slate-800">
-                {siteConfig.navigation.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-1.5 px-2 rounded-xl hover:text-[#007DFE] hover:bg-white/40 transition-colors"
-                  >
-                    {item.label}
-                  </a>
-                ))}
-                <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-3">
-                  <a
-                    href={createWhatsAppLink()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Button
-                      variant="primary"
-                      size="md"
-                      className="w-full justify-center shadow-lg shadow-blue-500/25 py-3 font-semibold rounded-2xl"
+              {/* Inner Scroll Container: Scroll mulus bebas scrollbar & garis hitam vertikal */}
+              <div
+                className="max-h-[calc(100vh-90px)] overflow-y-auto overscroll-contain no-scrollbar p-5 sm:p-6 outline-none focus:outline-none [&::-webkit-scrollbar]:hidden"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                }}
+              >
+                <nav className="flex flex-col gap-3 text-base font-semibold text-slate-800">
+                  {siteConfig.navigation.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-1.5 px-2 rounded-xl hover:text-[#007DFE] hover:bg-white/40 transition-colors"
                     >
-                      Konsultasi WhatsApp
-                    </Button>
-                  </a>
-                </div>
-              </nav>
+                      {item.label}
+                    </a>
+                  ))}
+                  <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-3">
+                    <a
+                      href={createWhatsAppLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="w-full justify-center shadow-lg shadow-blue-500/25 py-3 font-semibold rounded-2xl"
+                      >
+                        Konsultasi WhatsApp
+                      </Button>
+                    </a>
+                  </div>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
