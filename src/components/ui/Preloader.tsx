@@ -11,30 +11,30 @@ export const Preloader: React.FC = () => {
   const [isMounted, setIsMounted] = useState(true);
 
   useEffect(() => {
-    // Jalankan timer progres loading dari 0% hingga 100% secara dinamis dan mulus
+    // Jalankan timer progres loading dari 0% hingga 100% dengan ritme sinematik dan berkelas
     const startTime = Date.now();
-    const duration = 1400; // 1.4 detik: optimal, elegan, tidak terlalu lama
+    const duration = 2800; // 2.8 detik untuk durasi progres yang pas, mantap, dan mudah dinikmati
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const rawProgress = Math.min(100, (elapsed / duration) * 100);
+      const t = Math.min(1, elapsed / duration);
 
-      // Easing melambat di akhir (cubic ease out)
-      const easedProgress = Math.round(
-        100 * (1 - Math.pow(1 - rawProgress / 100, 2.5))
-      );
+      // Smooth cubic easeInOut agar di awal tidak melompat cepat dan ritme terasa natural
+      const easedT =
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-      setProgress(easedProgress);
+      const currentPercent = Math.min(100, Math.round(easedT * 100));
+      setProgress(currentPercent);
 
       if (elapsed >= duration) {
         clearInterval(interval);
         setProgress(100);
-        // Beri jeda 250ms pada 100% agar user melihat status selesai
+        // Beri jeda 500ms pada 100% agar user puas melihat animasi selesai & teks "Selamat datang!"
         setTimeout(() => {
           setIsDone(true);
-        }, 250);
+        }, 500);
       }
-    }, 25);
+    }, 30);
 
     return () => clearInterval(interval);
   }, []);
@@ -49,9 +49,9 @@ export const Preloader: React.FC = () => {
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.03,
-            filter: "blur(8px)",
-            transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+            scale: 1.04,
+            filter: "blur(10px)",
+            transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
           }}
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white select-none overflow-hidden"
           style={{ willChange: "opacity, transform, filter" }}
@@ -142,13 +142,15 @@ export const Preloader: React.FC = () => {
               {/* Baris Status: Keterangan & Persentase */}
               <div className="w-full flex items-center justify-between text-xs px-0.5">
                 <span className="text-slate-500 font-medium tracking-tight">
-                  {progress < 35
-                    ? "Menghubungkan layanan..."
-                    : progress < 75
-                    ? "Memuat komponen DickyWeb..."
+                  {progress < 25
+                    ? "Menghubungkan layanan DickyWeb..."
+                    : progress < 55
+                    ? "Memuat aset visual & sistem..."
+                    : progress < 85
+                    ? "Mengoptimalkan performa halaman..."
                     : progress < 100
-                    ? "Menyiapkan pengalaman..."
-                    : "Selamat datang!"}
+                    ? "Menyiapkan pengalaman terbaik..."
+                    : "Selamat datang di DickyWeb!"}
                 </span>
                 <span className="font-bold text-[#007DFE] font-poppins tabular-nums">
                   {progress}%
