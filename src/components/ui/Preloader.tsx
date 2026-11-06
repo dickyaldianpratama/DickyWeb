@@ -113,28 +113,74 @@ export const Preloader: React.FC = () => {
                 />
               </svg>
 
-              {/* Ikon Emblem Logo DickyWeb Langsung Terapung di Tengah Cincin Biru (Tanpa Bulatan Putih) */}
+              {/* Ikon Emblem Logo DickyWeb dengan Animasi Modern & Profesional */}
               <motion.div
-                initial={{ scale: 0.85, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.45, ease: "easeOut" }}
+                initial={{ scale: 0.7, opacity: 0, filter: "blur(6px)" }}
+                animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="relative z-20 flex items-center justify-center pointer-events-none"
               >
+                {/* Aura Glowing Orb di Belakang Logo (Denyut Cahaya Hidup) */}
                 <motion.div
-                  animate={{ y: [0, -2.5, 0], scale: [1, 1.03, 1] }}
+                  animate={{
+                    scale: [0.85, 1.25, 0.85],
+                    opacity: [0.25, 0.65, 0.25],
+                  }}
                   transition={{
                     repeat: Infinity,
-                    duration: 2.6,
+                    duration: 2.4,
                     ease: "easeInOut",
                   }}
-                  className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center"
+                  className="absolute w-14 h-14 rounded-full bg-gradient-to-tr from-[#007DFE]/30 to-[#00B4D8]/25 blur-lg pointer-events-none"
+                />
+
+                {/* Gelombang Echo Halus Memancar Keluar dari Logo */}
+                <motion.div
+                  animate={{
+                    scale: [0.8, 1.55],
+                    opacity: [0.45, 0],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2.4,
+                    ease: "easeOut",
+                  }}
+                  className="absolute w-12 h-12 rounded-full border border-blue-400/35 pointer-events-none"
+                />
+
+                {/* Wadah Floating & Breathing Emblem Logo */}
+                <motion.div
+                  animate={{
+                    y: [0, -3.5, 0],
+                    rotate: [-1.2, 1.2, -1.2],
+                    scale: progress >= 100 ? [1, 1.12, 1.05] : [1, 1.04, 1],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2.4,
+                    ease: "easeInOut",
+                  }}
+                  className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center overflow-hidden rounded-2xl"
                 >
+                  {/* Kilau Cahaya (Sheen Beam Sweep) Melintas Miring di Permukaan Logo */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent -rotate-45 pointer-events-none z-10"
+                    animate={{ x: ["-180%", "180%"] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2.2,
+                      ease: "easeInOut",
+                      repeatDelay: 1,
+                    }}
+                  />
+
+                  {/* Gambar Logo Beresolusi Tinggi */}
                   <Image
                     src="/images/logo/dickyweb-icon.png"
                     alt="DickyWeb Icon"
                     width={60}
                     height={60}
-                    className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,125,254,0.3)]"
+                    className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,125,254,0.35)] relative z-0"
                     priority
                   />
                 </motion.div>
