@@ -198,20 +198,14 @@ export function deletePortfolioItem(id: string): boolean {
 
 /* ------------------- HERO COLLAGE STORAGE ------------------- */
 
-const OLD_STOCK_PHOTO_IDS = [
-  "photo-1522071820081-009f0129c71c",
-  "photo-1573496359142-b8d87734a5a2",
-  "photo-1573497019940-1c28c88b4f3e",
-  "photo-1507238691740-187a5b1d37b8",
-];
-
 export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
   {
     id: "slot-1",
     label: "Foto 1 (Kiri Atas / Besar)",
     positionDescription: "Posisi Kiri Atas (Vertikal Tinggi)",
-    alt: "",
-    imageUrl: "",
+    alt: "Tim Developer & Konsultan IT DickyWeb",
+    imageUrl:
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -223,8 +217,9 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     id: "slot-2",
     label: "Foto 2 (Kanan Atas)",
     positionDescription: "Posisi Kanan Atas (Kompak)",
-    alt: "",
-    imageUrl: "",
+    alt: "Eksekutif & Klien Bisnis DickyWeb",
+    imageUrl:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -236,8 +231,9 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     id: "slot-3",
     label: "Foto 3 (Kiri Bawah)",
     positionDescription: "Posisi Kiri Bawah (Sedang)",
-    alt: "",
-    imageUrl: "",
+    alt: "Konsultan & Tech Lead DickyWeb",
+    imageUrl:
+      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -249,8 +245,9 @@ export const DEFAULT_HERO_COLLAGE: HeroCollageSlot[] = [
     id: "slot-4",
     label: "Foto 4 (Kanan Bawah)",
     positionDescription: "Posisi Kanan Bawah (Vertikal Tinggi)",
-    alt: "",
-    imageUrl: "",
+    alt: "Laptop Pengembangan Website Modern & SEO Ready",
+    imageUrl:
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
     imageFit: "cover",
     scale: 1,
     positionX: 50,
@@ -277,18 +274,8 @@ export function getHeroCollage(): HeroCollageSlot[] {
     if (!raw) return DEFAULT_HERO_COLLAGE;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length === 4) {
-      // Bersihkan foto bawaan Unsplash jika masih tersisa di penyimpanan browser
-      const sanitized = parsed.map((slot: HeroCollageSlot) => {
-        const isOldStock = OLD_STOCK_PHOTO_IDS.some((stockId) =>
-          slot.imageUrl?.includes(stockId)
-        );
-        if (isOldStock) {
-          return { ...slot, imageUrl: "", alt: "" };
-        }
-        return slot;
-      });
-      memoryHeroCollageCache = sanitized;
-      return sanitized;
+      memoryHeroCollageCache = parsed;
+      return parsed;
     }
     return DEFAULT_HERO_COLLAGE;
   } catch (e) {
@@ -308,23 +295,14 @@ export async function getHeroCollageFromDB(): Promise<HeroCollageSlot[]> {
   try {
     const idbData = await getIdbItem<HeroCollageSlot[]>(HERO_COLLAGE_STORAGE_KEY);
     if (Array.isArray(idbData) && idbData.length === 4) {
-      const sanitized = idbData.map((slot: HeroCollageSlot) => {
-        const isOldStock = OLD_STOCK_PHOTO_IDS.some((stockId) =>
-          slot.imageUrl?.includes(stockId)
-        );
-        if (isOldStock) {
-          return { ...slot, imageUrl: "", alt: "" };
-        }
-        return slot;
-      });
-      memoryHeroCollageCache = sanitized;
+      memoryHeroCollageCache = idbData;
       // Sinkronkan ke localStorage jika muat
       try {
-        localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(sanitized));
+        localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(idbData));
       } catch {
         // Abaikan jika kuota localStorage habis, data sudah aman di IndexedDB
       }
-      return sanitized;
+      return idbData;
     }
   } catch (e) {
     console.warn("Gagal membaca hero collage dari IndexedDB:", e);

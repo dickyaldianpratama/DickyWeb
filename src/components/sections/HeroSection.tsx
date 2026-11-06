@@ -36,11 +36,9 @@ export const HeroSection: React.FC = () => {
   const [isBrosurModalOpen, setIsBrosurModalOpen] = useState(false);
   const [activePromo, setActivePromo] = useState(DEFAULT_PROMO);
   const [heroCollage, setHeroCollage] = useState<HeroCollageSlot[]>(DEFAULT_HERO_COLLAGE);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     const loadImages = () => {
-      setIsMounted(true);
       const cached = getHeroCollage();
       if (cached && cached.some((s) => s.imageUrl)) {
         setHeroCollage(cached);
@@ -195,9 +193,7 @@ export const HeroSection: React.FC = () => {
                   }`}
                   style={{ position: "relative" }}
                 >
-                  {!isMounted ? (
-                    <div className="w-full h-full bg-slate-100" />
-                  ) : heroCollage[0]?.imageUrl ? (
+                  {heroCollage[0]?.imageUrl ? (
                     <Image
                       src={heroCollage[0].imageUrl}
                       alt={heroCollage[0].alt || "Foto 1"}
@@ -223,9 +219,7 @@ export const HeroSection: React.FC = () => {
                   }`}
                   style={{ position: "relative" }}
                 >
-                  {!isMounted ? (
-                    <div className="w-full h-full bg-slate-100" />
-                  ) : heroCollage[1]?.imageUrl ? (
+                  {heroCollage[1]?.imageUrl ? (
                     <Image
                       src={heroCollage[1].imageUrl}
                       alt={heroCollage[1].alt || "Foto 2"}
@@ -251,9 +245,7 @@ export const HeroSection: React.FC = () => {
                   }`}
                   style={{ position: "relative" }}
                 >
-                  {!isMounted ? (
-                    <div className="w-full h-full bg-slate-100" />
-                  ) : heroCollage[2]?.imageUrl ? (
+                  {heroCollage[2]?.imageUrl ? (
                     <Image
                       src={heroCollage[2].imageUrl}
                       alt={heroCollage[2].alt || "Foto 3"}
@@ -279,9 +271,7 @@ export const HeroSection: React.FC = () => {
                   }`}
                   style={{ position: "relative" }}
                 >
-                  {!isMounted ? (
-                    <div className="w-full h-full bg-slate-100" />
-                  ) : heroCollage[3]?.imageUrl ? (
+                  {heroCollage[3]?.imageUrl ? (
                     <Image
                       src={heroCollage[3].imageUrl}
                       alt={heroCollage[3].alt || "Foto 4"}
