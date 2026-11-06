@@ -180,14 +180,6 @@ export const Preloader: React.FC = () => {
                   style={{ width: `${Math.max(progress, 3)}%` }}
                 />
               </div>
-
-              {/* Studio Pill Badge Eksklusif: Modern, Clean & Berkelas */}
-              <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/60 text-[10.5px] text-slate-500 font-medium tracking-wide shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <span className="font-semibold text-slate-700">DickyWeb Studio</span>
-                <span className="text-slate-300">•</span>
-                <span className="text-slate-400">Fast Loading</span>
-              </div>
             </div>
           </div>
         </motion.div>
