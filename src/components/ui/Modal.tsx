@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Download, MessageCircle } from "lucide-react";
 import { Button } from "./Button";
 import { Badge } from "./Badge";
+import { ImageSkeleton } from "./Skeleton";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 
 interface ModalProps {
@@ -23,6 +24,14 @@ export const Modal: React.FC<ModalProps> = ({
   badge,
   imageUrl,
 }) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsImageLoaded(false);
+    }
+  }, [isOpen, imageUrl]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -126,13 +135,27 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Gambar Brosur */}
-        <div className="overflow-y-auto p-3 sm:p-6 flex-1 flex flex-col items-center justify-center bg-slate-100/50">
+        <div className="overflow-y-auto p-3 sm:p-6 flex-1 flex flex-col items-center justify-center bg-slate-100/50 min-h-[300px] sm:min-h-[420px]">
           <div className="relative group max-w-full rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+            {/* Skeleton Loading Shimmer saat gambar brosur di-load */}
+            {!isImageLoaded && (
+              <div className="w-[280px] sm:w-[380px] h-[360px] sm:h-[460px] max-w-full">
+                <ImageSkeleton
+                  variant="light"
+                  rounded="rounded-2xl"
+                  iconSize="lg"
+                  text="Memuat Brosur Promo..."
+                />
+              </div>
+            )}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
               alt={title}
-              className="max-h-[50vh] sm:max-h-[58vh] w-auto max-w-full object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
+              onLoad={() => setIsImageLoaded(true)}
+              className={`max-h-[50vh] sm:max-h-[58vh] w-auto max-w-full object-contain mx-auto transition-all duration-500 group-hover:scale-[1.01] ${
+                isImageLoaded ? "opacity-100 block" : "opacity-0 absolute inset-0 pointer-events-none"
+              }`}
             />
           </div>
           <p className="text-[10px] sm:text-[11px] text-slate-500 mt-2 text-center">

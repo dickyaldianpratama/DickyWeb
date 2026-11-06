@@ -16,6 +16,7 @@ import {
 } from "@/lib/storage";
 import { HeroCollageSlot } from "@/types/hero.types";
 import { Modal } from "../ui/Modal";
+import { ImageSkeleton } from "../ui/Skeleton";
 
 const getSlotImageStyle = (slot?: HeroCollageSlot): React.CSSProperties => {
   const fit = slot?.imageFit || "cover";
@@ -31,6 +32,77 @@ const getSlotImageStyle = (slot?: HeroCollageSlot): React.CSSProperties => {
     transform: `scale(${scale * flip}, ${scale}) rotate(${rot}deg)`,
     transformOrigin: `${posX}% ${posY}%`,
   };
+};
+
+interface HeroCollageSlotItemProps {
+  slot?: HeroCollageSlot;
+  slotIndex: number;
+  fallbackTitle: string;
+  heightClass: string;
+  mtClass?: string;
+  sizes: string;
+  priority?: boolean;
+}
+
+const HeroCollageSlotItem: React.FC<HeroCollageSlotItemProps> = ({
+  slot,
+  slotIndex,
+  fallbackTitle,
+  heightClass,
+  mtClass = "",
+  sizes,
+  priority = false,
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(false);
+  }, [slot?.imageUrl]);
+
+  const isContain = slot?.imageFit === "contain";
+
+  return (
+    <div
+      className={`rounded-3xl overflow-hidden shadow-xl border-4 border-white group transition-transform duration-300 hover:scale-[1.02] ${heightClass} ${mtClass} ${
+        isContain ? "bg-slate-900" : "bg-slate-100"
+      }`}
+      style={{ position: "relative" }}
+    >
+      {slot?.imageUrl ? (
+        <>
+          {/* Skeleton Shimmer saat gambar slot kolase dimuat */}
+          {!isLoaded && (
+            <div className="absolute inset-0 z-10">
+              <ImageSkeleton
+                variant={isContain ? "dark" : "light"}
+                rounded="rounded-3xl"
+                iconSize={slotIndex === 1 ? "sm" : "md"}
+              />
+            </div>
+          )}
+
+          <Image
+            src={slot.imageUrl}
+            alt={slot.alt || fallbackTitle}
+            fill
+            unoptimized
+            priority={priority}
+            sizes={sizes}
+            style={getSlotImageStyle(slot)}
+            onLoad={() => setIsLoaded(true)}
+            className={`transition-all duration-700 ease-out ${
+              isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.03]"
+            }`}
+          />
+        </>
+      ) : (
+        <div className="w-full h-full flex flex-col items-center justify-center p-3 text-slate-300 bg-slate-50 border border-dashed border-slate-200">
+          <ImageIcon className="w-8 h-8 text-slate-300 stroke-1 mb-1" />
+          <span className="text-[11px] font-medium text-slate-400">{fallbackTitle}</span>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export const HeroSection: React.FC = () => {
@@ -192,108 +264,45 @@ export const HeroSection: React.FC = () => {
               {/* Grid Kolase Asimetris */}
               <div className="grid grid-cols-2 gap-4" style={{ position: "relative" }}>
                 {/* Gambar 1: Diskusi Tim (Kiri Besar) */}
-                <div
-                  className={`rounded-3xl overflow-hidden shadow-xl border-4 border-white group h-64 sm:h-72 transition-transform duration-300 hover:scale-[1.02] ${
-                    heroCollage[0]?.imageFit === "contain" ? "bg-slate-900" : "bg-slate-100"
-                  }`}
-                  style={{ position: "relative" }}
-                >
-                  {heroCollage[0]?.imageUrl ? (
-                    <Image
-                      src={heroCollage[0].imageUrl}
-                      alt={heroCollage[0].alt || "Foto 1"}
-                      fill
-                      unoptimized
-                      priority
-                      sizes="(max-width: 640px) 180px, 220px"
-                      style={getSlotImageStyle(heroCollage[0])}
-                      className="transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-3 text-slate-300 bg-slate-50 border border-dashed border-slate-200">
-                      <ImageIcon className="w-8 h-8 text-slate-300 stroke-1 mb-1" />
-                      <span className="text-[11px] font-medium text-slate-400">Foto 1 (Kiri Atas)</span>
-                    </div>
-                  )}
-                </div>
+                <HeroCollageSlotItem
+                  slot={heroCollage[0]}
+                  slotIndex={0}
+                  fallbackTitle="Foto 1 (Kiri Atas)"
+                  heightClass="h-64 sm:h-72"
+                  sizes="(max-width: 640px) 180px, 220px"
+                  priority
+                />
 
                 {/* Gambar 2: Eksekutif/Profesional (Kanan Atas) */}
-                <div
-                  className={`rounded-3xl overflow-hidden shadow-xl border-4 border-white group h-32 sm:h-36 transition-transform duration-300 hover:scale-[1.02] ${
-                    heroCollage[1]?.imageFit === "contain" ? "bg-slate-900" : "bg-slate-100"
-                  }`}
-                  style={{ position: "relative" }}
-                >
-                  {heroCollage[1]?.imageUrl ? (
-                    <Image
-                      src={heroCollage[1].imageUrl}
-                      alt={heroCollage[1].alt || "Foto 2"}
-                      fill
-                      unoptimized
-                      priority
-                      sizes="(max-width: 640px) 180px, 220px"
-                      style={getSlotImageStyle(heroCollage[1])}
-                      className="transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-2 text-slate-300 bg-slate-50 border border-dashed border-slate-200">
-                      <ImageIcon className="w-6 h-6 text-slate-300 stroke-1 mb-0.5" />
-                      <span className="text-[10px] font-medium text-slate-400">Foto 2 (Kanan Atas)</span>
-                    </div>
-                  )}
-                </div>
+                <HeroCollageSlotItem
+                  slot={heroCollage[1]}
+                  slotIndex={1}
+                  fallbackTitle="Foto 2 (Kanan Atas)"
+                  heightClass="h-32 sm:h-36"
+                  sizes="(max-width: 640px) 180px, 220px"
+                  priority
+                />
 
                 {/* Gambar 3: Konsultan/Tech Lead (Kiri Bawah) */}
-                <div
-                  className={`rounded-3xl overflow-hidden shadow-xl border-4 border-white group h-44 sm:h-52 -mt-6 transition-transform duration-300 hover:scale-[1.02] ${
-                    heroCollage[2]?.imageFit === "contain" ? "bg-slate-900" : "bg-slate-100"
-                  }`}
-                  style={{ position: "relative" }}
-                >
-                  {heroCollage[2]?.imageUrl ? (
-                    <Image
-                      src={heroCollage[2].imageUrl}
-                      alt={heroCollage[2].alt || "Foto 3"}
-                      fill
-                      unoptimized
-                      priority
-                      sizes="(max-width: 640px) 180px, 220px"
-                      style={getSlotImageStyle(heroCollage[2])}
-                      className="transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-3 text-slate-300 bg-slate-50 border border-dashed border-slate-200">
-                      <ImageIcon className="w-7 h-7 text-slate-300 stroke-1 mb-1" />
-                      <span className="text-[10px] font-medium text-slate-400">Foto 3 (Kiri Bawah)</span>
-                    </div>
-                  )}
-                </div>
+                <HeroCollageSlotItem
+                  slot={heroCollage[2]}
+                  slotIndex={2}
+                  fallbackTitle="Foto 3 (Kiri Bawah)"
+                  heightClass="h-44 sm:h-52"
+                  mtClass="-mt-6"
+                  sizes="(max-width: 640px) 180px, 220px"
+                  priority
+                />
 
                 {/* Gambar 4: Pengembang Kode (Kanan Bawah) */}
-                <div
-                  className={`rounded-3xl overflow-hidden shadow-xl border-4 border-white group h-56 sm:h-64 -mt-20 transition-transform duration-300 hover:scale-[1.02] ${
-                    heroCollage[3]?.imageFit === "contain" ? "bg-slate-900" : "bg-slate-100"
-                  }`}
-                  style={{ position: "relative" }}
-                >
-                  {heroCollage[3]?.imageUrl ? (
-                    <Image
-                      src={heroCollage[3].imageUrl}
-                      alt={heroCollage[3].alt || "Foto 4"}
-                      fill
-                      unoptimized
-                      priority
-                      sizes="(max-width: 640px) 180px, 220px"
-                      style={getSlotImageStyle(heroCollage[3])}
-                      className="transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-3 text-slate-300 bg-slate-50 border border-dashed border-slate-200">
-                      <ImageIcon className="w-7 h-7 text-slate-300 stroke-1 mb-1" />
-                      <span className="text-[10px] font-medium text-slate-400">Foto 4 (Kanan Bawah)</span>
-                    </div>
-                  )}
-                </div>
+                <HeroCollageSlotItem
+                  slot={heroCollage[3]}
+                  slotIndex={3}
+                  fallbackTitle="Foto 4 (Kanan Bawah)"
+                  heightClass="h-56 sm:h-64"
+                  mtClass="-mt-20"
+                  sizes="(max-width: 640px) 180px, 220px"
+                />
               </div>
 
               {/* Floating Badge Kecepatan di atas kolase (Terkunci stabil di pojok kanan bawah kolase) */}

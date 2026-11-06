@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import {
   motion,
@@ -11,6 +11,7 @@ import {
 } from "framer-motion";
 import { PortfolioItem } from "@/types/portfolio.types";
 import { ArrowUpRight } from "lucide-react";
+import { ImageSkeleton } from "../ui/Skeleton";
 
 interface PortfolioCardProps {
   item: PortfolioItem;
@@ -19,6 +20,11 @@ interface PortfolioCardProps {
 export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsImageLoaded(false);
+  }, [item.image]);
 
   // Posisi mouse ternormalisasi (-0.5 hingga 0.5)
   const mouseX = useMotionValue(0);
@@ -149,13 +155,27 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
             imageFit === "contain" ? "p-2 sm:p-3 flex items-center justify-center bg-slate-950" : ""
           }`}
         >
+          {/* Skeleton Shimmer saat gambar portofolio dimuat */}
+          {!isImageLoaded && (
+            <div className="absolute inset-0 z-0">
+              <ImageSkeleton
+                variant="dark"
+                rounded="rounded-2xl sm:rounded-3xl"
+                iconSize="md"
+              />
+            </div>
+          )}
+
           <Image
             src={item.image}
             alt={item.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             quality={95}
-            className={`${fitClass} ${positionClass} w-full h-full transition-transform duration-500 ease-out`}
+            onLoad={() => setIsImageLoaded(true)}
+            className={`${fitClass} ${positionClass} w-full h-full transition-all duration-700 ease-out ${
+              isImageLoaded ? "opacity-100" : "opacity-0 scale-[1.02]"
+            }`}
             style={{
               transform: isHovered ? "scale(1.04)" : "scale(1)",
               willChange: "transform",
