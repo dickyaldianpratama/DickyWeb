@@ -16,11 +16,11 @@ export const Navbar: React.FC = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Kunci scroll halaman saat mobile menu dibuka dan sembunyikan floating widget
+  // Sembunyikan floating CTA dan kunci scroll background saat mobile drawer terbuka
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -42,14 +42,18 @@ export const Navbar: React.FC = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         mobileMenuOpen
-          ? "bg-white/95 sm:bg-white/90 backdrop-blur-xl border-b border-slate-200/60 shadow-xs"
+          ? "bg-white/85 backdrop-blur-2xl border-b border-slate-200/50 shadow-xs"
           : isScrolled
           ? "bg-white/95 backdrop-blur-xl shadow-xs border-b border-slate-200/90"
           : "bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200/90"
       }`}
     >
       {/* Top Navbar Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 transition-[padding] duration-200">
+      <div
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 transition-[padding] duration-200 ${
+          mobileMenuOpen ? "border-b border-slate-200/40" : ""
+        }`}
+      >
         <div className="flex items-center justify-between">
           {/* Brand Logo DickyWeb */}
           <Link
@@ -113,44 +117,38 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer: Modern Floating Glassmorphism Card */}
+      {/* Mobile Drawer Menu: Glassmorphism Card (Frosted Semi-Transparan sesuai gambar referensi) */}
       {mobileMenuOpen && (
-        <div className="md:hidden px-3.5 pt-1 pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-slate-900/10 p-5 max-h-[calc(100vh-85px)] overflow-y-auto">
-            <nav className="flex flex-col gap-1.5 text-sm sm:text-base font-semibold text-slate-800 font-poppins">
-              {siteConfig.navigation.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 rounded-2xl hover:bg-blue-50/80 hover:text-[#007DFE] active:bg-blue-100/80 transition-all flex items-center justify-between group cursor-pointer"
+        <div className="md:hidden bg-white/75 backdrop-blur-2xl border-b border-slate-200/50 rounded-b-3xl px-6 pt-4 pb-6 shadow-xl shadow-slate-900/5 max-h-[calc(100vh-80px)] overflow-y-auto">
+          <nav className="flex flex-col gap-3.5 text-base font-medium text-slate-800">
+            {siteConfig.navigation.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-1 hover:text-[#007DFE] transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+            <div className="pt-4 border-t border-slate-200/50 flex flex-col gap-3">
+              <a
+                href={createWhatsAppLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="w-full gap-2 shadow-md py-3 font-semibold"
                 >
-                  <span>{item.label}</span>
-                  <span className="text-slate-300 group-hover:text-[#007DFE] group-hover:translate-x-0.5 transition-all text-sm">
-                    →
-                  </span>
-                </a>
-              ))}
-
-              <div className="pt-3 mt-2 border-t border-slate-200/60 flex flex-col gap-2.5">
-                <a
-                  href={createWhatsAppLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Button
-                    variant="primary"
-                    size="md"
-                    className="w-full gap-2 shadow-lg shadow-blue-500/25 py-3 font-semibold"
-                  >
-                    <span>Konsultasi WhatsApp</span>
-                    <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-                  </Button>
-                </a>
-              </div>
-            </nav>
-          </div>
+                  Konsultasi WhatsApp
+                  <ArrowUpRight className="w-4 h-4" />
+                </Button>
+              </a>
+            </div>
+          </nav>
         </div>
       )}
     </header>
