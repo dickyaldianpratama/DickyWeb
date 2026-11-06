@@ -213,37 +213,39 @@ export const Preloader: React.FC = () => {
                 />
               </div>
 
-              {/* Teks Logo DickyWeb dengan Animasi Kilauan Berjalan */}
-              <div className="mt-5 flex flex-col items-center">
-                <div className="relative overflow-hidden px-2 py-0.5 inline-flex items-center justify-center select-none">
-                  {/* Teks DickyWeb persis seperti di Logo Page User */}
+              {/* Teks Logo DickyWeb dengan Kilauan Cahaya (Light Shimmer) yang Mengikuti Bentuk Huruf */}
+              <div className="mt-5 flex flex-col items-center select-none">
+                <div className="relative inline-flex items-center justify-center">
+                  {/* Base Text: Dicky (Dark Slate) + Web (Brand Blue) persis seperti di Logo Page User */}
                   <span className="font-extrabold tracking-tight font-poppins text-lg sm:text-xl text-slate-900">
                     Dicky<span className="text-[#007DFE]">Web</span>
                   </span>
 
-                  {/* Kilauan Cahaya Berjalan (Sheen Beam Sweep) Melintas Miring di Permukaan Teks */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/85 to-transparent -skew-x-20 pointer-events-none z-10"
-                    animate={{ x: ["-160%", "160%"] }}
+                  {/* Kilauan Light Murni Berjalan dari Sudut Kiri ke Sudut Kanan Mengikuti Bentuk Huruf */}
+                  <motion.span
+                    aria-hidden="true"
+                    className="absolute inset-0 font-extrabold tracking-tight font-poppins text-lg sm:text-xl pointer-events-none select-none"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(115deg, transparent 0%, transparent 25%, rgba(255, 255, 255, 0.35) 38%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.35) 62%, transparent 75%, transparent 100%)",
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "130px 100%",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                    animate={{
+                      backgroundPosition: ["-140px 0", "220px 0"],
+                    }}
                     transition={{
                       repeat: Infinity,
                       duration: 2.2,
                       ease: "easeInOut",
                       repeatDelay: 0.8,
                     }}
-                  />
-
-                  {/* Pendaran Kilau Cyan Lembut Mengikuti Jalur Kilau */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/35 to-transparent -skew-x-20 pointer-events-none z-10"
-                    animate={{ x: ["-160%", "160%"] }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 2.2,
-                      ease: "easeInOut",
-                      repeatDelay: 0.8,
-                    }}
-                  />
+                  >
+                    DickyWeb
+                  </motion.span>
                 </div>
 
                 {/* Tagline Resmi DickyWeb */}
