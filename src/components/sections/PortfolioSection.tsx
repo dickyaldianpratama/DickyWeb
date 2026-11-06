@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getPortfolioList } from "@/lib/storage";
 import { portfolioData } from "@/data/portfolio";
 import { PortfolioItem } from "@/types/portfolio.types";
@@ -16,6 +16,8 @@ export const PortfolioSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState(0);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+  const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -40,11 +42,50 @@ export const PortfolioSection: React.FC = () => {
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
-  // Reset ke halaman awal saat kategori diganti
+  // Reset ke posisi awal saat kategori diganti
   const handleCategoryChange = (cat: string) => {
     setActiveCategory(cat);
     setCurrentPage(0);
     setSlideDirection(0);
+    setMobileActiveIndex(0);
+    if (mobileScrollRef.current) {
+      mobileScrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+    }
+  };
+
+  // Navigasi scroll horizontal untuk layar mobile/app
+  const handleMobileScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    if (!container || !container.firstElementChild) return;
+    const cardWidth = (container.firstElementChild as HTMLElement).offsetWidth + 16;
+    const index = Math.round(container.scrollLeft / cardWidth);
+    const clampedIndex = Math.min(Math.max(0, index), filtered.length - 1);
+    if (clampedIndex !== mobileActiveIndex) {
+      setMobileActiveIndex(clampedIndex);
+    }
+  };
+
+  const scrollToMobileIndex = (index: number) => {
+    if (!mobileScrollRef.current) return;
+    const cards = mobileScrollRef.current.children;
+    if (cards[index]) {
+      (cards[index] as HTMLElement).scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+      setMobileActiveIndex(index);
+    }
+  };
+
+  const handleMobilePrev = () => {
+    const nextIdx = Math.max(0, mobileActiveIndex - 1);
+    scrollToMobileIndex(nextIdx);
+  };
+
+  const handleMobileNext = () => {
+    const nextIdx = Math.min(filtered.length - 1, mobileActiveIndex + 1);
+    scrollToMobileIndex(nextIdx);
   };
 
   const handlePrevPage = () => {
@@ -107,85 +148,157 @@ export const PortfolioSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Portfolio Cards Grid: Maksimal 4 Kartu dengan Fitur Geser Halus */}
+        {/* Portfolio Cards: Tampilan Responsif (Mobile Horizontal Swipe & Desktop 3-Column Grid) */}
         {filtered.length > 0 ? (
           <div>
-            <div className="relative overflow-hidden">
-              <AnimatePresence mode="wait" custom={slideDirection}>
-                <motion.div
-                  key={`${activeCategory}-${currentPage}`}
-                  custom={slideDirection}
-                  initial={{
-                    opacity: 0,
-                    x: slideDirection > 0 ? 30 : slideDirection < 0 ? -30 : 0,
-                  }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{
-                    opacity: 0,
-                    x: slideDirection > 0 ? -30 : slideDirection < 0 ? 30 : 0,
-                  }}
-                  transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
-                >
-                  {displayedItems.map((item) => (
-                    <PortfolioCard key={item.id} item={item} />
-                  ))}
-                </motion.div>
-              </AnimatePresence>
+            {/* TAMPILAN MOBILE (< sm): Horizontal Swipe Carousel dengan Snap & Titik Indikator (Tidak Memanjang ke Bawah) */}
+            <div className="block sm:hidden">
+              <div
+                ref={mobileScrollRef}
+                onScroll={handleMobileScroll}
+                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 pt-1 px-4 -mx-4 no-scrollbar touch-pan-x"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {filtered.map((item) => (
+                  <div
+                    key={item.id}
+                    className="w-[86vw] max-w-[340px] shrink-0 snap-center"
+                  >
+                    <PortfolioCard item={item} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Navigasi & Titik Indikator Mobile */}
+              {filtered.length > 1 && (
+                <div className="mt-4 flex items-center justify-between px-1 pt-2 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 font-medium">
+                    {mobileActiveIndex + 1} dari {filtered.length} proyek
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    {/* Tombol Geser Kiri Mobile */}
+                    <button
+                      type="button"
+                      onClick={handleMobilePrev}
+                      disabled={mobileActiveIndex === 0}
+                      aria-label="Proyek sebelumnya"
+                      className="w-8 h-8 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-[#007DFE] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    {/* Titik-titik Indikator Mobile */}
+                    <div className="flex items-center gap-1.5 px-1 max-w-[140px] overflow-x-auto no-scrollbar py-1">
+                      {filtered.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => scrollToMobileIndex(idx)}
+                          aria-label={`Lihat proyek ${idx + 1}`}
+                          className={`transition-all duration-300 rounded-full cursor-pointer shrink-0 ${
+                            mobileActiveIndex === idx
+                              ? "w-5 h-2 bg-[#007DFE]"
+                              : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Tombol Geser Kanan Mobile */}
+                    <button
+                      type="button"
+                      onClick={handleMobileNext}
+                      disabled={mobileActiveIndex === filtered.length - 1}
+                      aria-label="Proyek berikutnya"
+                      className="w-8 h-8 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-[#007DFE] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Navigasi Fitur Geser (Hanya tampil jika proyek lebih dari 4 item) */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100">
-                <p className="text-xs text-slate-500 font-medium">
-                  Menampilkan {currentPage * ITEMS_PER_PAGE + 1} -{" "}
-                  {Math.min((currentPage + 1) * ITEMS_PER_PAGE, filtered.length)} dari{" "}
-                  {filtered.length} portofolio proyek
-                </p>
-
-                {/* Tombol Geser & Indicator Dots */}
-                <div className="flex items-center gap-3">
-                  {/* Tombol Geser Kiri (Sebelumnya) */}
-                  <button
-                    type="button"
-                    onClick={handlePrevPage}
-                    disabled={currentPage === 0}
-                    aria-label="Slide sebelumnya"
-                    className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-[#007DFE] hover:text-white hover:border-[#007DFE] disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-xs flex items-center justify-center cursor-pointer"
+            {/* TAMPILAN DESKTOP & TABLET (sm ke atas): Grid 3 Kolom & Pagination Halus jika > 6 Proyek */}
+            <div className="hidden sm:block">
+              <div className="relative overflow-hidden">
+                <AnimatePresence mode="wait" custom={slideDirection}>
+                  <motion.div
+                    key={`${activeCategory}-${currentPage}`}
+                    custom={slideDirection}
+                    initial={{
+                      opacity: 0,
+                      x: slideDirection > 0 ? 30 : slideDirection < 0 ? -30 : 0,
+                    }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{
+                      opacity: 0,
+                      x: slideDirection > 0 ? -30 : slideDirection < 0 ? 30 : 0,
+                    }}
+                    transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
+                    className="grid grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
                   >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-
-                  {/* Indicator Dots Interaktif */}
-                  <div className="flex items-center gap-1.5 px-2">
-                    {Array.from({ length: totalPages }).map((_, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleDotClick(idx)}
-                        aria-label={`Buka slide ${idx + 1}`}
-                        className={`transition-all duration-300 rounded-full cursor-pointer ${
-                          currentPage === idx
-                            ? "w-6 h-2 bg-[#007DFE]"
-                            : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
-                        }`}
-                      />
+                    {displayedItems.map((item) => (
+                      <PortfolioCard key={item.id} item={item} />
                     ))}
-                  </div>
-
-                  {/* Tombol Geser Kanan (Berikutnya) */}
-                  <button
-                    type="button"
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages - 1}
-                    aria-label="Slide berikutnya"
-                    className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-[#007DFE] hover:text-white hover:border-[#007DFE] disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-xs flex items-center justify-center cursor-pointer"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            )}
+
+              {/* Navigasi Fitur Geser Desktop (Hanya tampil jika proyek lebih dari 6 item) */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 font-medium">
+                    Menampilkan {currentPage * ITEMS_PER_PAGE + 1} -{" "}
+                    {Math.min((currentPage + 1) * ITEMS_PER_PAGE, filtered.length)} dari{" "}
+                    {filtered.length} portofolio proyek
+                  </p>
+
+                  {/* Tombol Geser & Indicator Dots */}
+                  <div className="flex items-center gap-3">
+                    {/* Tombol Geser Kiri (Sebelumnya) */}
+                    <button
+                      type="button"
+                      onClick={handlePrevPage}
+                      disabled={currentPage === 0}
+                      aria-label="Slide sebelumnya"
+                      className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-[#007DFE] hover:text-white hover:border-[#007DFE] disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-xs flex items-center justify-center cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    {/* Indicator Dots Interaktif */}
+                    <div className="flex items-center gap-1.5 px-2">
+                      {Array.from({ length: totalPages }).map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleDotClick(idx)}
+                          aria-label={`Buka slide ${idx + 1}`}
+                          className={`transition-all duration-300 rounded-full cursor-pointer ${
+                            currentPage === idx
+                              ? "w-6 h-2 bg-[#007DFE]"
+                              : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Tombol Geser Kanan (Berikutnya) */}
+                    <button
+                      type="button"
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages - 1}
+                      aria-label="Slide berikutnya"
+                      className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-[#007DFE] hover:text-white hover:border-[#007DFE] disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-xs flex items-center justify-center cursor-pointer"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="text-center py-16 bg-slate-50 rounded-3xl border border-slate-200/80 p-8">

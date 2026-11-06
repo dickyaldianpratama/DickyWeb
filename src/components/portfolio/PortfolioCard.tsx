@@ -39,6 +39,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
   const glareBackground = useMotionTemplate`radial-gradient(circle 350px at ${glareX} ${glareY}, rgba(255, 255, 255, 0.16), transparent 70%)`;
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return;
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -47,7 +48,8 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
     mouseY.set(y);
   };
 
-  const handlePointerEnter = () => {
+  const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return;
     setIsHovered(true);
   };
 
