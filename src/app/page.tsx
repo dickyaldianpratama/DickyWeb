@@ -1,4 +1,5 @@
 import React from "react";
+import { Preloader } from "@/components/ui/Preloader";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AboutSection } from "@/components/sections/AboutSection";
@@ -14,6 +15,9 @@ import { FloatingCTA } from "@/components/layout/FloatingCTA";
 export default function HomePage() {
   return (
     <div className="relative min-h-screen flex flex-col bg-white">
+      {/* Loading Screen Eksklusif dengan Logo DickyWeb */}
+      <Preloader />
+
       {/* Header Navigasi */}
       <Navbar />
 
