@@ -114,32 +114,42 @@ export const Preloader: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* Bagian Progress Bar & Status Text */}
-            <div className="mt-8 w-56 sm:w-64 flex flex-col items-center space-y-2.5">
-              {/* Progress Track */}
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/60 shadow-inner">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-[#007DFE] via-[#00B4D8] to-[#007DFE] rounded-full shadow-[0_0_12px_rgba(0,125,254,0.5)]"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-
-              {/* Baris Status: Keterangan & Persentase */}
-              <div className="w-full flex items-center justify-between text-xs px-0.5">
-                <span className="text-slate-500 font-medium tracking-tight">
-                  {progress < 25
-                    ? "Menghubungkan layanan DickyWeb..."
-                    : progress < 55
-                    ? "Memuat aset visual & sistem..."
-                    : progress < 85
-                    ? "Mengoptimalkan performa halaman..."
+            {/* Bagian Progress Bar & Status Text (Tinggi Terkunci / Anti-Loncat) */}
+            <div className="mt-8 w-64 sm:w-72 flex flex-col items-center">
+              {/* Baris Status & Persentase (Fixed Height 20px agar tidak pernah loncat ke atas) */}
+              <div className="w-full h-5 flex items-center justify-between text-xs px-0.5 mb-2.5">
+                <span className="text-slate-500 font-medium tracking-tight truncate max-w-[75%]">
+                  {progress < 30
+                    ? "Memuat sistem..."
+                    : progress < 70
+                    ? "Memuat komponen..."
                     : progress < 100
-                    ? "Menyiapkan pengalaman terbaik..."
-                    : "Selamat datang di DickyWeb!"}
+                    ? "Hampir siap..."
+                    : "Selesai!"}
                 </span>
-                <span className="font-bold text-[#007DFE] font-poppins tabular-nums">
+                <span className="font-bold text-[#007DFE] font-poppins tabular-nums shrink-0">
                   {progress}%
                 </span>
+              </div>
+
+              {/* Progress Track: Tebal, Jelas, & Berjalan Horizontal dari 0% ke 100% */}
+              <div className="w-full h-2.5 sm:h-3 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/80 shadow-inner relative">
+                <div
+                  className="h-full bg-gradient-to-r from-[#007DFE] via-[#00B4D8] to-[#007DFE] rounded-full transition-[width] duration-75 ease-out shadow-[0_0_12px_rgba(0,125,254,0.5)] relative overflow-hidden"
+                  style={{ width: `${Math.max(progress, 2)}%` }}
+                >
+                  {/* Kilau Halus Melintas di Atas Warna Biru Loading yang Berjalan */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                    initial={{ x: "-100%" }}
+                    animate={{ x: "100%" }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1.2,
+                      ease: "linear",
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
