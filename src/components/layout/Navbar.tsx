@@ -139,7 +139,7 @@ export const Navbar: React.FC = () => {
                 {item.label}
               </a>
             ))}
-            <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
+            <div className="pt-4 flex flex-col gap-3">
               <a
                 href={createWhatsAppLink()}
                 target="_blank"
