@@ -1,0 +1,73 @@
+import { PricingPlan } from "@/types/pricing.types";
+
+export const pricingPlans: PricingPlan[] = [
+  {
+    id: "starter",
+    name: "Paket Starter (Landing Page)",
+    badge: "Diskon 40%",
+    isPopular: false,
+    originalPrice: 1500000,
+    discountedPrice: 899000,
+    discountPercent: 40,
+    description:
+      "Solusi cepat dan hemat untuk promosi produk tunggal, kampanye iklan, atau jasa perorangan yang ingin langsung go-digital.",
+    deliveryTime: "2 - 4 Hari Kerja",
+    features: [
+      "1 Halaman Panjang (Single Page)",
+      "Hosting Cloud SSD Cepat & SSL",
+      "Desain Responsif Mobile & Desktop",
+      "Integrasi Tombol WhatsApp Langsung",
+      "Setup Google Indexing & SEO Dasar",
+      "Garansi Maintenance 14 Hari",
+    ],
+    notIncluded: ["Sistem Pembayaran Otomatis", "Email Bisnis Khusus"],
+    buttonText: "Pesan Paket Starter",
+  },
+  {
+    id: "professional",
+    name: "Paket Bisnis Pro (Company Profile)",
+    badge: "Paling Populer • Diskon 35%",
+    isPopular: true,
+    originalPrice: 3800000,
+    discountedPrice: 2470000,
+    discountPercent: 35,
+    description:
+      "Standar emas untuk perusahaan, CV, agensi, dan profesional yang menginginkan kredibilitas brand maksimal di mata klien & mitra.",
+    deliveryTime: "5 - 7 Hari Kerja",
+    features: [
+      "Hingga 5 - 7 Halaman Menu Lengkap",
+      "Gratis Domain .com Internasional (1 Tahun)",
+      "Hosting NVMe Ultra Cepat & SSL Grade A+",
+      "Gratis 3 Akun Email Bisnis Resmi (@perusahaan.com)",
+      "Desain UI/UX Eksklusif & Elegan (Poppins Modern)",
+      "Optimasi SEO On-Page Siap Peringkat 1 Google",
+      "Formulir Penawaran & Hubungi Kami",
+      "Panduan Video Pengelolaan Website",
+      "Garansi Maintenance 60 Hari Penuh",
+    ],
+    buttonText: "Pesan Paket Bisnis Pro",
+  },
+  {
+    id: "enterprise",
+    name: "Paket E-Commerce / Custom Web",
+    badge: "Diskon 30%",
+    isPopular: false,
+    originalPrice: 7500000,
+    discountedPrice: 5250000,
+    discountPercent: 30,
+    description:
+      "Website toko online lengkap atau sistem web custom dengan fitur transaksi otomatis, katalog dinamis, dan dashboard admin mandiri.",
+    deliveryTime: "10 - 14 Hari Kerja",
+    features: [
+      "Fitur E-Commerce / Sistem Web Custom",
+      "Payment Gateway Otomatis (QRIS, VA Bank, E-Wallet)",
+      "Kalkulator Ongkir Otomatis Ekspedisi Nasional",
+      "Dashboard Kelola Produk & Transaksi Mandiri",
+      "Gratis Domain .com + Cloud Server Kinerja Tinggi",
+      "Notifikasi Order via WhatsApp / Email",
+      "Pelatihan Langsung (Zoom) untuk Staf Anda",
+      "Prioritas Dukungan Teknis & Garansi 90 Hari",
+    ],
+    buttonText: "Pesan Paket Custom",
+  },
+];
