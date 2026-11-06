@@ -212,6 +212,45 @@ export const Preloader: React.FC = () => {
                   style={{ width: `${Math.max(progress, 3)}%` }}
                 />
               </div>
+
+              {/* Teks Logo DickyWeb dengan Animasi Kilauan Berjalan */}
+              <div className="mt-5 flex flex-col items-center">
+                <div className="relative overflow-hidden px-2 py-0.5 inline-flex items-center justify-center select-none">
+                  {/* Teks DickyWeb persis seperti di Logo Page User */}
+                  <span className="font-extrabold tracking-tight font-poppins text-lg sm:text-xl text-slate-900">
+                    Dicky<span className="text-[#007DFE]">Web</span>
+                  </span>
+
+                  {/* Kilauan Cahaya Berjalan (Sheen Beam Sweep) Melintas Miring di Permukaan Teks */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/85 to-transparent -skew-x-20 pointer-events-none z-10"
+                    animate={{ x: ["-160%", "160%"] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2.2,
+                      ease: "easeInOut",
+                      repeatDelay: 0.8,
+                    }}
+                  />
+
+                  {/* Pendaran Kilau Cyan Lembut Mengikuti Jalur Kilau */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/35 to-transparent -skew-x-20 pointer-events-none z-10"
+                    animate={{ x: ["-160%", "160%"] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2.2,
+                      ease: "easeInOut",
+                      repeatDelay: 0.8,
+                    }}
+                  />
+                </div>
+
+                {/* Tagline Resmi DickyWeb */}
+                <span className="text-[9px] sm:text-[9.5px] font-semibold text-slate-400 tracking-[0.24em] uppercase font-poppins mt-0.5">
+                  Build • Innovate • Grow
+                </span>
+              </div>
             </div>
           </div>
         </motion.div>
