@@ -15,16 +15,12 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      // Jika user mulai scrolling saat menu terbuka, otomatis tutup menu
-      if (mobileMenuOpen && window.scrollY > 10) {
-        setMobileMenuOpen(false);
-      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [mobileMenuOpen]);
+  }, []);
 
-  // Kunci scroll body saat mobile menu dibuka dan beri tahu FloatingCTA agar sembunyi
+  // Kunci scroll halaman saat mobile menu dibuka dan sembunyikan floating widget
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -44,24 +40,16 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-200 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         mobileMenuOpen
-          ? "bg-white border-none border-b-0 shadow-none"
+          ? "bg-white/95 sm:bg-white/90 backdrop-blur-xl border-b border-slate-200/60 shadow-xs"
           : isScrolled
           ? "bg-white/95 backdrop-blur-xl shadow-xs border-b border-slate-200/90"
           : "bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200/90"
       }`}
     >
       {/* Top Navbar Bar */}
-      <div
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-[padding] duration-200 ${
-          mobileMenuOpen
-            ? "py-3 sm:py-3.5 border-none border-b-0"
-            : isScrolled
-            ? "py-2.5 sm:py-3"
-            : "py-3.5 sm:py-4"
-        }`}
-      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 transition-[padding] duration-200">
         <div className="flex items-center justify-between">
           {/* Brand Logo DickyWeb */}
           <Link
@@ -82,7 +70,7 @@ export const Navbar: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-700">
             {siteConfig.navigation.map((item) => (
               <a
                 key={item.label}
@@ -112,47 +100,57 @@ export const Navbar: React.FC = () => {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-              aria-label="Toggle Menu"
+              className="p-2 rounded-xl text-slate-700 hover:bg-slate-100/80 active:bg-slate-200/80 transition-colors cursor-pointer"
+              aria-label={mobileMenuOpen ? "Tutup Menu" : "Buka Menu"}
             >
               {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6 stroke-[2.2]" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="w-6 h-6 stroke-[2.2]" />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu: benar-benar bersih tanpa garis abu-abu dan tanpa bayangan */}
+      {/* Mobile Navigation Drawer: Modern Floating Glassmorphism Card */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white px-6 pb-6 pt-2 border-none border-b-0 shadow-none max-h-[calc(100vh-80px)] overflow-y-auto">
-          <nav className="flex flex-col gap-4 text-base font-medium text-slate-700">
-            {siteConfig.navigation.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-[#007DFE] transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-            <div className="pt-4 flex flex-col gap-3">
-              <a
-                href={createWhatsAppLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Button variant="primary" size="md" className="w-full gap-2">
-                  Konsultasi WhatsApp
-                  <ArrowUpRight className="w-4 h-4" />
-                </Button>
-              </a>
-            </div>
-          </nav>
+        <div className="md:hidden px-3.5 pt-1 pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-slate-900/10 p-5 max-h-[calc(100vh-85px)] overflow-y-auto">
+            <nav className="flex flex-col gap-1.5 text-sm sm:text-base font-semibold text-slate-800 font-poppins">
+              {siteConfig.navigation.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 rounded-2xl hover:bg-blue-50/80 hover:text-[#007DFE] active:bg-blue-100/80 transition-all flex items-center justify-between group cursor-pointer"
+                >
+                  <span>{item.label}</span>
+                  <span className="text-slate-300 group-hover:text-[#007DFE] group-hover:translate-x-0.5 transition-all text-sm">
+                    →
+                  </span>
+                </a>
+              ))}
+
+              <div className="pt-3 mt-2 border-t border-slate-200/60 flex flex-col gap-2.5">
+                <a
+                  href={createWhatsAppLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Button
+                    variant="primary"
+                    size="md"
+                    className="w-full gap-2 shadow-lg shadow-blue-500/25 py-3 font-semibold"
+                  >
+                    <span>Konsultasi WhatsApp</span>
+                    <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+                  </Button>
+                </a>
+              </div>
+            </nav>
+          </div>
         </div>
       )}
     </header>
