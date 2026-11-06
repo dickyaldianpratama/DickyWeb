@@ -24,10 +24,10 @@ export const AboutSection: React.FC = () => {
   ];
 
   return (
-    <section id="about" className="py-20 bg-white border-t border-slate-100 relative">
+    <section id="about" className="py-12 sm:py-16 bg-white border-t border-slate-100 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Seksi (Sesuai Referensi Gambar) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-10 sm:mb-12">
           <div className="lg:col-span-6 space-y-3">
             <span className="text-xs font-bold text-[#007DFE] tracking-wider uppercase font-poppins">
               About Us

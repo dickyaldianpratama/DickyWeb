@@ -82,16 +82,16 @@ export const HeroSection: React.FC = () => {
   return (
     <section
       id="home"
-      className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-gradient-to-b from-blue-50/60 via-white to-white"
+      className="relative pt-20 pb-12 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16 overflow-hidden bg-gradient-to-b from-blue-50/60 via-white to-white"
     >
       {/* Background Soft Glow Accents */}
       <div className="absolute top-16 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-28 right-1/4 w-80 h-80 bg-amber-300/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           {/* Kolom Kiri: Copywriting & Value Proposition (Sesuai Referensi Gambar) */}
-          <div className="lg:col-span-7 space-y-8 text-left">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
             {/* Tagline / Promo Pill */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/70 text-[#007DFE] text-xs font-semibold tracking-wide border border-blue-200/50">
               <span>Jasa Pembuatan Website Modern #1 di Indonesia</span>
