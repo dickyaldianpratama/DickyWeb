@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getPortfolioList } from "@/lib/storage";
+import { getPortfolioList, getPortfolioListFromCloud } from "@/lib/storage";
 import { portfolioData } from "@/data/portfolio";
 import { PortfolioItem } from "@/types/portfolio.types";
 import { PortfolioCard } from "../portfolio/PortfolioCard";
@@ -30,6 +30,13 @@ export const PortfolioSection: React.FC = () => {
       setItems(getPortfolioList());
     };
     queueMicrotask(handleUpdate);
+
+    // Ambil data terbaru dari Supabase Cloud (memastikan HP dan device lain langsung terupdate)
+    getPortfolioListFromCloud().then((cloudItems) => {
+      if (cloudItems && cloudItems.length > 0) {
+        setItems(cloudItems);
+      }
+    });
 
     window.addEventListener("portfolio_updated", handleUpdate);
     return () => window.removeEventListener("portfolio_updated", handleUpdate);

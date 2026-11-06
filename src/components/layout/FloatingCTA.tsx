@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { MessageCircle, Tag } from "lucide-react";
 import { createWhatsAppLink } from "@/lib/whatsapp";
-import { getActivePromo, DEFAULT_PROMO } from "@/lib/storage";
+import { getActivePromo, getActivePromoFromCloud, DEFAULT_PROMO } from "@/lib/storage";
 import { BrochurePromoData } from "@/types/promo.types";
 import { Modal } from "../ui/Modal";
 
@@ -19,6 +19,9 @@ export const FloatingCTA: React.FC = () => {
     // Load active promo
     const loadPromo = () => {
       setPromo(getActivePromo());
+      getActivePromoFromCloud().then((cloudPromo) => {
+        if (cloudPromo) setPromo(cloudPromo);
+      });
     };
     loadPromo();
 

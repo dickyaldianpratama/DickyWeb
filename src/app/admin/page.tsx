@@ -7,6 +7,7 @@ import { siteConfig } from "@/data/siteConfig";
 import { PromoSettingForm } from "@/components/admin/PromoSettingForm";
 import { PortfolioManager } from "@/components/admin/PortfolioManager";
 import { HeroImagesManager } from "@/components/admin/HeroImagesManager";
+import { CloudSyncBanner } from "@/components/admin/CloudSyncBanner";
 import {
   Lock,
   ShieldCheck,
@@ -258,6 +259,9 @@ export default function AdminPage() {
                 </button>
               </div>
             </div>
+
+            {/* Supabase Cloud Multi-Device Sync Banner */}
+            <CloudSyncBanner />
 
             {/* Tab Content Box */}
             <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm">

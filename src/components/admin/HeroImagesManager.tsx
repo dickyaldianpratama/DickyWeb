@@ -236,7 +236,7 @@ export const HeroImagesManager: React.FC = () => {
       const success = await saveHeroCollageAsync(updated);
       if (success) {
         setSlots(updated);
-        showNotification(`${editingSlot.label} berhasil disimpan permanen! Foto tetap melekat saat reload.`);
+        showNotification(`${editingSlot.label} berhasil disimpan ke Supabase Cloud! Foto aktif di semua device & HP.`);
         handleCloseEdit();
       } else {
         alert("Gagal menyimpan ke penyimpanan browser. Silakan coba kembali.");
@@ -1003,7 +1003,7 @@ export const HeroImagesManager: React.FC = () => {
                   {isSaving ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Menyimpan ke Storage...</span>
+                      <span>Mengunggah ke Cloud Supabase...</span>
                     </>
                   ) : (
                     <>

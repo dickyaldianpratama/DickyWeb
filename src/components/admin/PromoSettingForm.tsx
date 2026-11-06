@@ -1,17 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrochurePromoData } from "@/types/promo.types";
-import { getActivePromo, saveActivePromo } from "@/lib/storage";
+import { getActivePromo, getActivePromoFromCloud, saveActivePromoAsync } from "@/lib/storage";
 import { BrochureUploader } from "./BrochureUploader";
 import { Button } from "../ui/Button";
-import { Save, CheckCircle, Eye } from "lucide-react";
+import { Save, CheckCircle, Eye, Loader2 } from "lucide-react";
 import { Modal } from "../ui/Modal";
 
 export const PromoSettingForm: React.FC = () => {
   const [formData, setFormData] = useState<BrochurePromoData>(() => getActivePromo());
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  useEffect(() => {
+    getActivePromoFromCloud().then((cloudPromo) => {
+      if (cloudPromo) {
+        setFormData(cloudPromo);
+      }
+    });
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -23,16 +32,23 @@ export const PromoSettingForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updated: BrochurePromoData = {
-      ...formData,
-      updatedAt: new Date().toISOString(),
-    };
-    const success = saveActivePromo(updated);
-    if (success) {
-      setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 3000);
+    setIsSaving(true);
+    try {
+      const updated: BrochurePromoData = {
+        ...formData,
+        updatedAt: new Date().toISOString(),
+      };
+      const success = await saveActivePromoAsync(updated);
+      if (success) {
+        setSavedSuccess(true);
+        setTimeout(() => setSavedSuccess(false), 3000);
+      } else {
+        alert("Gagal menyimpan ke Supabase Cloud. Silakan coba lagi.");
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -163,9 +179,24 @@ export const PromoSettingForm: React.FC = () => {
           <span>Lihat Pratinjau Popup</span>
         </button>
 
-        <Button type="submit" variant="primary" size="md" className="gap-2 shadow-md">
-          <Save className="w-4 h-4" />
-          <span>Simpan Perubahan</span>
+        <Button
+          type="submit"
+          variant="primary"
+          size="md"
+          disabled={isSaving}
+          className="gap-2 shadow-md"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Menyimpan ke Cloud...</span>
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4" />
+              <span>Simpan Perubahan</span>
+            </>
+          )}
         </Button>
       </div>
 

@@ -5,9 +5,10 @@ import Image from "next/image";
 import { PortfolioItem } from "@/types/portfolio.types";
 import {
   getPortfolioList,
-  addPortfolioItem,
-  updatePortfolioItem,
-  deletePortfolioItem,
+  getPortfolioListFromCloud,
+  addPortfolioItemAsync,
+  updatePortfolioItemAsync,
+  deletePortfolioItemAsync,
 } from "@/lib/storage";
 import { Button } from "../ui/Button";
 import { compressImage } from "@/lib/imageCompression";
@@ -56,6 +57,7 @@ export const PortfolioManager: React.FC = () => {
 
   const [imageInputMode, setImageInputMode] = useState<"upload" | "url">("upload");
   const [isCompressing, setIsCompressing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load items
@@ -64,6 +66,13 @@ export const PortfolioManager: React.FC = () => {
       setItems(getPortfolioList());
     };
     queueMicrotask(handleUpdate);
+
+    // Ambil data terbaru dari Supabase Cloud
+    getPortfolioListFromCloud().then((cloudItems) => {
+      if (cloudItems && cloudItems.length > 0) {
+        setItems(cloudItems);
+      }
+    });
 
     window.addEventListener("portfolio_updated", handleUpdate);
     return () => window.removeEventListener("portfolio_updated", handleUpdate);
@@ -131,7 +140,7 @@ export const PortfolioManager: React.FC = () => {
   };
 
   // Submit Simpan
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title.trim() || !formData.image.trim()) {
@@ -139,47 +148,48 @@ export const PortfolioManager: React.FC = () => {
       return;
     }
 
-    const payload: PortfolioItem = {
-      id: editingItem ? editingItem.id : `proyek-${Date.now()}`,
-      title: formData.title.trim(),
-      category: formData.category.trim() || "WEBSITE",
-      image: formData.image.trim(),
-      imageFit: formData.imageFit,
-      imagePosition: formData.imagePosition,
-      client: editingItem ? editingItem.client : formData.title.trim(),
-      description: editingItem ? editingItem.description : "",
-      techStack: editingItem ? editingItem.techStack : ["Website"],
-      metrics: editingItem ? editingItem.metrics : "",
-      liveUrl: formData.liveUrl.trim(),
-    };
+    setIsSaving(true);
+    try {
+      const payload: PortfolioItem = {
+        id: editingItem ? editingItem.id : `proyek-${Date.now()}`,
+        title: formData.title.trim(),
+        category: formData.category.trim() || "WEBSITE",
+        image: formData.image.trim(),
+        imageFit: formData.imageFit,
+        imagePosition: formData.imagePosition,
+        client: editingItem ? editingItem.client : formData.title.trim(),
+        description: editingItem ? editingItem.description : "",
+        techStack: editingItem ? editingItem.techStack : ["Website"],
+        metrics: editingItem ? editingItem.metrics : "",
+        liveUrl: formData.liveUrl.trim(),
+      };
 
-    if (editingItem) {
-      const success = updatePortfolioItem(payload);
-      if (success) {
-        showNotification(`Proyek "${payload.title}" berhasil diperbarui!`);
-        setIsModalOpen(false);
+      if (editingItem) {
+        const success = await updatePortfolioItemAsync(payload);
+        if (success) {
+          showNotification(`Proyek "${payload.title}" berhasil diperbarui ke Supabase Cloud!`);
+          setIsModalOpen(false);
+        } else {
+          alert("Gagal memperbarui proyek. Silakan coba lagi.");
+        }
       } else {
-        alert(
-          "Penyimpanan browser penuh! Harap gunakan file gambar yang lebih kecil atau gunakan URL gambar."
-        );
+        const success = await addPortfolioItemAsync(payload);
+        if (success) {
+          showNotification(`Proyek "${payload.title}" berhasil disimpan ke Supabase Cloud!`);
+          setIsModalOpen(false);
+        } else {
+          alert("Gagal menambahkan proyek. Silakan coba lagi.");
+        }
       }
-    } else {
-      const success = addPortfolioItem(payload);
-      if (success) {
-        showNotification(`Proyek "${payload.title}" berhasil ditambahkan!`);
-        setIsModalOpen(false);
-      } else {
-        alert(
-          "Penyimpanan browser penuh! Harap gunakan file gambar yang lebih kecil atau gunakan URL gambar."
-        );
-      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
   // Hapus
-  const handleDelete = (item: PortfolioItem) => {
+  const handleDelete = async (item: PortfolioItem) => {
     if (confirm(`Yakin ingin menghapus proyek "${item.title}"?`)) {
-      const success = deletePortfolioItem(item.id);
+      const success = await deletePortfolioItemAsync(item.id);
       if (success) {
         showNotification(`Proyek "${item.title}" telah dihapus.`);
       }
@@ -685,8 +695,23 @@ export const PortfolioManager: React.FC = () => {
                 >
                   Batal
                 </button>
-                <Button type="submit" variant="primary" size="md" className="font-semibold shadow-sm">
-                  {editingItem ? "Simpan Perubahan" : "Simpan Proyek"}
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  disabled={isSaving}
+                  className="font-semibold shadow-sm inline-flex items-center gap-2"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Menyimpan ke Cloud...</span>
+                    </>
+                  ) : editingItem ? (
+                    "Simpan Perubahan"
+                  ) : (
+                    "Simpan Proyek"
+                  )}
                 </Button>
               </div>
             </form>

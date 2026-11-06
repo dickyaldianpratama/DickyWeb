@@ -8,7 +8,7 @@ import { Badge } from "../ui/Badge";
 import { formatRupiah } from "@/lib/utils";
 import { createPackageWhatsAppLink } from "@/lib/whatsapp";
 import { Check, Clock, MessageCircle, Download } from "lucide-react";
-import { getActivePromo, DEFAULT_PROMO } from "@/lib/storage";
+import { getActivePromo, getActivePromoFromCloud, DEFAULT_PROMO } from "@/lib/storage";
 import { Modal } from "../ui/Modal";
 
 export const PricingSection: React.FC = () => {
@@ -20,6 +20,11 @@ export const PricingSection: React.FC = () => {
       setPromo(getActivePromo());
     };
     queueMicrotask(handleUpdate);
+
+    // Ambil promo terbaru dari Supabase Cloud
+    getActivePromoFromCloud().then((cloudPromo) => {
+      if (cloudPromo) setPromo(cloudPromo);
+    });
 
     window.addEventListener("promo_updated", handleUpdate);
     return () => window.removeEventListener("promo_updated", handleUpdate);

@@ -8,6 +8,7 @@ import { createWhatsAppLink } from "@/lib/whatsapp";
 import { ArrowUpRight, MessageCircle, ImageIcon } from "lucide-react";
 import {
   getActivePromo,
+  getActivePromoFromCloud,
   DEFAULT_PROMO,
   getHeroCollage,
   getHeroCollageFromDB,
@@ -47,6 +48,9 @@ export const HeroSection: React.FC = () => {
         if (dbData && dbData.length === 4 && dbData.some((s) => s.imageUrl)) {
           setHeroCollage(dbData);
         }
+      });
+      getActivePromoFromCloud().then((promo) => {
+        if (promo) setActivePromo(promo);
       });
     };
 

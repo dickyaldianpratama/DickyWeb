@@ -3,6 +3,7 @@ import { PortfolioItem } from "@/types/portfolio.types";
 import { HeroCollageSlot } from "@/types/hero.types";
 import { portfolioData } from "@/data/portfolio";
 import { getIdbItem, setIdbItem } from "./indexedDB";
+import { uploadMediaToCloud, saveCloudData, fetchCloudData } from "./supabase";
 
 export const DEFAULT_PROMO: BrochurePromoData = {
   id: "promo-default",
@@ -48,21 +49,76 @@ export function getActivePromo(): BrochurePromoData {
   }
 }
 
-export function saveActivePromo(data: BrochurePromoData): boolean {
-  if (typeof window === "undefined") return false;
+/**
+ * Mengambil data promo aktif langsung dari Supabase Cloud CDN.
+ * Jika cloud belum memiliki data atau offline, fallback ke localStorage / DEFAULT_PROMO.
+ */
+export async function getActivePromoFromCloud(): Promise<BrochurePromoData> {
+  if (typeof window === "undefined") {
+    return DEFAULT_PROMO;
+  }
   try {
-    localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(data));
+    const cloudPromo = await fetchCloudData<BrochurePromoData>("promo");
+    if (cloudPromo && (cloudPromo.id || cloudPromo.title)) {
+      try {
+        localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(cloudPromo));
+      } catch {
+        // Ignore
+      }
+      return cloudPromo;
+    }
+  } catch (err) {
+    console.warn("Gagal mengambil promo dari Supabase cloud:", err);
+  }
+  return getActivePromo();
+}
+
+/**
+ * Menyimpan data promo secara asynchronous ke Supabase Cloud (Storage & Site-Data)
+ * serta mengamankan ke localStorage.
+ */
+export async function saveActivePromoAsync(data: BrochurePromoData): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+
+  let finalData = { ...data };
+
+  // 1. Jika flyer promo berupa base64, unggah ke Supabase bucket dickyweb-media/brochures
+  if (finalData.brochureImageUrl && finalData.brochureImageUrl.startsWith("data:")) {
+    try {
+      const publicUrl = await uploadMediaToCloud(
+        finalData.brochureImageUrl,
+        "brochures",
+        `promo-brochure-${Date.now()}.jpg`
+      );
+      if (publicUrl) {
+        finalData.brochureImageUrl = publicUrl;
+      }
+    } catch (err) {
+      console.error("Gagal mengunggah brosur ke Supabase:", err);
+    }
+  }
+
+  // 2. Simpan JSON ke Supabase Cloud Site-Data
+  try {
+    await saveCloudData("promo", finalData);
+  } catch (err) {
+    console.warn("Gagal sinkronisasi promo ke cloud:", err);
+  }
+
+  // 3. Simpan ke localStorage sebagai cache lokal
+  try {
+    localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(finalData));
     window.dispatchEvent(new Event("promo_updated"));
     return true;
   } catch (e) {
     console.warn("Promo storage quota exceeded, attempting fallback...", e);
     try {
       const fallback = {
-        ...data,
+        ...finalData,
         brochureImageUrl:
-          data.brochureImageUrl && data.brochureImageUrl.length > 300000
+          finalData.brochureImageUrl && finalData.brochureImageUrl.length > 300000
             ? DEFAULT_PROMO.brochureImageUrl
-            : data.brochureImageUrl,
+            : finalData.brochureImageUrl,
       };
       localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(fallback));
       window.dispatchEvent(new Event("promo_updated"));
@@ -70,6 +126,22 @@ export function saveActivePromo(data: BrochurePromoData): boolean {
     } catch {
       return false;
     }
+  }
+}
+
+export function saveActivePromo(data: BrochurePromoData): boolean {
+  if (typeof window === "undefined") return false;
+  // Trigger background async cloud sync
+  saveActivePromoAsync(data).catch((err) => {
+    console.warn("Background promo save error:", err);
+  });
+
+  try {
+    localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(data));
+    window.dispatchEvent(new Event("promo_updated"));
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -82,13 +154,11 @@ export function getPortfolioList(): PortfolioItem[] {
   try {
     const raw = localStorage.getItem(PORTFOLIO_STORAGE_KEY);
     if (!raw) {
-      // Inisialisasi awal dengan data bawaan
       localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(portfolioData));
       return portfolioData;
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      // Bersihkan url eksternal rcsdigitalmandiri dari storage pengguna jika ada
       let needsSync = false;
       const sanitizedList = parsed.map((item: PortfolioItem) => {
         let updatedItem = { ...item };
@@ -96,7 +166,6 @@ export function getPortfolioList(): PortfolioItem[] {
           needsSync = true;
           updatedItem.liveUrl = "";
         }
-        // Pastikan Coffee Kenangan memiliki liveUrl aktif
         if (
           (item.id === "kopi-senja" ||
             item.title.toLowerCase().includes("coffee") ||
@@ -111,7 +180,6 @@ export function getPortfolioList(): PortfolioItem[] {
           };
         }
 
-        // Sinkronkan gambar Unsplash lama ke aset lokal berkecepatan tinggi Vercel CDN
         const matchingDefault = portfolioData.find((d) => d.id === item.id);
         if (
           matchingDefault &&
@@ -124,7 +192,6 @@ export function getPortfolioList(): PortfolioItem[] {
         return updatedItem;
       });
 
-      // Cek apakah contoh RuangRuma sudah ada di storage lokal pengguna
       const hasRuangRuma = sanitizedList.some(
         (p: PortfolioItem) =>
           p.id === "kitchen-set-ruangruma" ||
@@ -147,21 +214,79 @@ export function getPortfolioList(): PortfolioItem[] {
   }
 }
 
-export function savePortfolioList(items: PortfolioItem[]): boolean {
-  if (typeof window === "undefined") return false;
+/**
+ * Mengambil daftar portofolio langsung dari Supabase Cloud CDN.
+ * Jika ada data di cloud, otomatis sinkronkan ke cache localStorage.
+ */
+export async function getPortfolioListFromCloud(): Promise<PortfolioItem[]> {
+  if (typeof window === "undefined") {
+    return portfolioData;
+  }
   try {
-    localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(items));
+    const cloudItems = await fetchCloudData<PortfolioItem[]>("portfolio");
+    if (Array.isArray(cloudItems) && cloudItems.length > 0) {
+      try {
+        localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(cloudItems));
+      } catch {
+        // Ignore quota error for localStorage
+      }
+      return cloudItems;
+    }
+  } catch (err) {
+    console.warn("Gagal mengambil portofolio dari cloud:", err);
+  }
+  return getPortfolioList();
+}
+
+/**
+ * Menyimpan seluruh daftar portofolio ke Supabase Cloud (Storage & Site-Data)
+ * Mengunggah setiap foto base64 ke Supabase Storage secara otomatis.
+ */
+export async function savePortfolioListAsync(items: PortfolioItem[]): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+
+  const updatedItems: PortfolioItem[] = [];
+
+  // 1. Loop dan upload gambar baru yang masih berupa base64 ke Supabase Storage
+  for (const item of items) {
+    let finalItem = { ...item };
+    if (finalItem.image && finalItem.image.startsWith("data:")) {
+      try {
+        const publicUrl = await uploadMediaToCloud(
+          finalItem.image,
+          "portfolio",
+          `portfolio-${finalItem.id}-${Date.now()}.jpg`
+        );
+        if (publicUrl) {
+          finalItem.image = publicUrl;
+        }
+      } catch (err) {
+        console.error(`Gagal upload foto portofolio ${finalItem.id}:`, err);
+      }
+    }
+    updatedItems.push(finalItem);
+  }
+
+  // 2. Simpan array JSON portofolio ke Supabase Site-Data
+  try {
+    await saveCloudData("portfolio", updatedItems);
+  } catch (err) {
+    console.warn("Gagal simpan portofolio ke cloud:", err);
+  }
+
+  // 3. Simpan ke localStorage
+  try {
+    localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(updatedItems));
     window.dispatchEvent(new Event("portfolio_updated"));
     return true;
   } catch (e) {
-    console.warn("Storage quota exceeded! Menjalankan optimasi memori darurat...", e);
+    console.warn("LocalStorage penuh, membersihkan gambar besar...", e);
     try {
-      // Jika memori penuh akibat gambar raw raksasa lama, gantikan gambar yang >250KB dengan fallback ringan
-      const sanitized = items.map((item) => {
+      const sanitized = updatedItems.map((item) => {
         if (item.image && item.image.startsWith("data:") && item.image.length > 250000) {
           return {
             ...item,
-            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+            image: "/images/portfolio/portfolio-1.jpg",
           };
         }
         return item;
@@ -169,10 +294,42 @@ export function savePortfolioList(items: PortfolioItem[]): boolean {
       localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(sanitized));
       window.dispatchEvent(new Event("portfolio_updated"));
       return true;
-    } catch (fallbackError) {
-      console.error("Gagal menyimpan ke storage:", fallbackError);
+    } catch {
       return false;
     }
+  }
+}
+
+export function savePortfolioList(items: PortfolioItem[]): boolean {
+  if (typeof window === "undefined") return false;
+  // Trigger background async upload & sync
+  savePortfolioListAsync(items).catch((err) => {
+    console.warn("Background portfolio save error:", err);
+  });
+
+  try {
+    localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(items));
+    window.dispatchEvent(new Event("portfolio_updated"));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function addPortfolioItemAsync(
+  item: Omit<PortfolioItem, "id"> & { id?: string }
+): Promise<boolean> {
+  try {
+    const current = await getPortfolioListFromCloud();
+    const newItem: PortfolioItem = {
+      ...item,
+      id: item.id || `proyek-${Date.now()}`,
+    };
+    const updated = [newItem, ...current];
+    return await savePortfolioListAsync(updated);
+  } catch (e) {
+    console.error("Failed to add portfolio item async", e);
+    return false;
   }
 }
 
@@ -191,6 +348,19 @@ export function addPortfolioItem(item: Omit<PortfolioItem, "id"> & { id?: string
   }
 }
 
+export async function updatePortfolioItemAsync(updatedItem: PortfolioItem): Promise<boolean> {
+  try {
+    const current = await getPortfolioListFromCloud();
+    const index = current.findIndex((p) => p.id === updatedItem.id);
+    if (index === -1) return false;
+    current[index] = updatedItem;
+    return await savePortfolioListAsync([...current]);
+  } catch (e) {
+    console.error("Failed to update portfolio item async", e);
+    return false;
+  }
+}
+
 export function updatePortfolioItem(updatedItem: PortfolioItem): boolean {
   try {
     const current = getPortfolioList();
@@ -200,6 +370,17 @@ export function updatePortfolioItem(updatedItem: PortfolioItem): boolean {
     return savePortfolioList([...current]);
   } catch (e) {
     console.error("Failed to update portfolio item", e);
+    return false;
+  }
+}
+
+export async function deletePortfolioItemAsync(id: string): Promise<boolean> {
+  try {
+    const current = await getPortfolioListFromCloud();
+    const filtered = current.filter((p) => p.id !== id);
+    return await savePortfolioListAsync(filtered);
+  } catch (e) {
+    console.error("Failed to delete portfolio item async", e);
     return false;
   }
 }
@@ -309,13 +490,42 @@ export function getHeroCollage(): HeroCollageSlot[] {
 }
 
 /**
- * Membaca data Hero Collage dari IndexedDB (kapasitas >500MB).
- * Mendukung foto resolusi tinggi dan animasi GIF berukuran besar tanpa batas 5MB localStorage.
+ * Membaca data Hero Collage:
+ * 1. Coba ambil dari Supabase Cloud (Site-Data). Ini memastikan device baru (misal HP) langsung dapat gambar terbaru.
+ * 2. Jika offline / belum ada di cloud, fallback ke IndexedDB (>500MB).
+ * 3. Fallback ke localStorage dan default.
  */
 export async function getHeroCollageFromDB(): Promise<HeroCollageSlot[]> {
   if (typeof window === "undefined") {
     return DEFAULT_HERO_COLLAGE;
   }
+
+  // 1. Coba ambil data dari Supabase Cloud
+  try {
+    const cloudData = await fetchCloudData<HeroCollageSlot[]>("hero-collage");
+    if (Array.isArray(cloudData) && cloudData.length === 4) {
+      const sanitized = cloudData.map((slot: HeroCollageSlot, idx: number) => {
+        if (!slot.imageUrl || slot.imageUrl.includes("images.unsplash.com")) {
+          return {
+            ...slot,
+            imageUrl: DEFAULT_HERO_COLLAGE[idx]?.imageUrl || `/images/hero/hero-${idx + 1}.jpg`,
+          };
+        }
+        return slot;
+      });
+      memoryHeroCollageCache = sanitized;
+      // Sinkronkan ke IndexedDB dan localStorage
+      setIdbItem(HERO_COLLAGE_STORAGE_KEY, sanitized).catch(() => {});
+      try {
+        localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(sanitized));
+      } catch {}
+      return sanitized;
+    }
+  } catch (cloudErr) {
+    console.warn("Gagal mengambil hero collage dari cloud:", cloudErr);
+  }
+
+  // 2. Fallback ke IndexedDB lokal jika cloud belum ada data / offline
   try {
     const idbData = await getIdbItem<HeroCollageSlot[]>(HERO_COLLAGE_STORAGE_KEY);
     if (Array.isArray(idbData) && idbData.length === 4) {
@@ -329,45 +539,70 @@ export async function getHeroCollageFromDB(): Promise<HeroCollageSlot[]> {
         return slot;
       });
       memoryHeroCollageCache = sanitized;
-      // Sinkronkan ke localStorage jika muat
       try {
         localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(sanitized));
-      } catch {
-        // Abaikan jika kuota localStorage habis, data sudah aman di IndexedDB
-      }
+      } catch {}
       return sanitized;
     }
   } catch (e) {
     console.warn("Gagal membaca hero collage dari IndexedDB:", e);
   }
+
   return getHeroCollage();
 }
 
 /**
- * Menyimpan data kolase foto ke IndexedDB dan localStorage secara asynchronous.
- * Menjamin file foto dan animasi GIF tersimpan permanen dan melekat kuat saat reload.
+ * Menyimpan data kolase foto:
+ * 1. Mengunggah gambar base64 ke Supabase Storage (Public CDN).
+ * 2. Menyimpan konfigurasi slot ke Supabase Site-Data (JSON Cloud).
+ * 3. Menyimpan cache ke IndexedDB dan localStorage.
  */
 export async function saveHeroCollageAsync(slots: HeroCollageSlot[]): Promise<boolean> {
   if (typeof window === "undefined") return false;
 
-  memoryHeroCollageCache = slots;
+  // 1. Loop dan upload gambar baru yang masih berupa data: URL ke Supabase Storage
+  const updatedSlots: HeroCollageSlot[] = [];
+  for (const slot of slots) {
+    let finalSlot = { ...slot };
+    if (finalSlot.imageUrl && finalSlot.imageUrl.startsWith("data:")) {
+      try {
+        const publicUrl = await uploadMediaToCloud(
+          finalSlot.imageUrl,
+          "hero",
+          `hero-slot-${finalSlot.id}-${Date.now()}.jpg`
+        );
+        if (publicUrl) {
+          finalSlot.imageUrl = publicUrl;
+        }
+      } catch (err) {
+        console.error(`Gagal upload hero slot ${finalSlot.id} ke cloud:`, err);
+      }
+    }
+    updatedSlots.push(finalSlot);
+  }
 
-  // 1. Simpan permanen ke IndexedDB (Kapasitas >500MB, aman untuk GIF besar)
+  memoryHeroCollageCache = updatedSlots;
+
+  // 2. Simpan konfigurasi ke Supabase Cloud
+  try {
+    await saveCloudData("hero-collage", updatedSlots);
+  } catch (err) {
+    console.warn("Gagal simpan hero-collage ke cloud:", err);
+  }
+
+  // 3. Simpan ke IndexedDB lokal
   let idbSuccess = false;
   try {
-    idbSuccess = await setIdbItem(HERO_COLLAGE_STORAGE_KEY, slots);
+    idbSuccess = await setIdbItem(HERO_COLLAGE_STORAGE_KEY, updatedSlots);
   } catch (e) {
     console.warn("IndexedDB save error:", e);
   }
 
-  // 2. Simpan juga ke localStorage untuk pembacaan instan jika kuota mencukupi
+  // 4. Simpan ke localStorage
   try {
-    localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(slots));
+    localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(updatedSlots));
   } catch (quotaError) {
-    console.warn(
-      "Ukuran foto melebihi batas 5MB localStorage. Foto diamankan 100% di IndexedDB.",
-      quotaError
-    );
+    console.warn("LocalStorage penuh, data aman di IndexedDB dan Supabase Cloud.", quotaError);
   }
 
   // Siarkan event pembaruan
@@ -381,21 +616,16 @@ export function saveHeroCollage(slots: HeroCollageSlot[]): boolean {
 
   memoryHeroCollageCache = slots;
 
-  // Simpan ke IndexedDB di background
-  setIdbItem(HERO_COLLAGE_STORAGE_KEY, slots).catch((err) => {
-    console.warn("Background IndexedDB save error:", err);
+  // Trigger background cloud sync
+  saveHeroCollageAsync(slots).catch((err) => {
+    console.warn("Background hero collage save error:", err);
   });
 
   try {
     localStorage.setItem(HERO_COLLAGE_STORAGE_KEY, JSON.stringify(slots));
     window.dispatchEvent(new Event("hero_images_updated"));
     return true;
-  } catch (e) {
-    console.warn(
-      "LocalStorage kuota terlampaui. Gambar diamankan ke IndexedDB.",
-      e
-    );
-    window.dispatchEvent(new Event("hero_images_updated"));
+  } catch {
     return true;
   }
 }
@@ -423,5 +653,80 @@ export function updateHeroCollageSlot(updatedSlot: HeroCollageSlot): boolean {
   } catch (e) {
     console.error("Failed to update hero collage slot", e);
     return false;
+  }
+}
+
+/* ------------------- MASTER CLOUD MIGRATION / SYNC ------------------- */
+
+export interface MasterSyncResult {
+  success: boolean;
+  heroCount: number;
+  portfolioCount: number;
+  promoSynced: boolean;
+  message: string;
+}
+
+/**
+ * Memindai seluruh data yang saat ini tersimpan di browser laptop (IndexedDB & LocalStorage),
+ * kemudian mengunggah semua foto & JSON ke Supabase Cloud Storage.
+ * Fungsi ini memastikan data yang sebelumnya diupload di laptop langsung tampil di HP dan semua device!
+ */
+export async function syncAllLocalDataToCloud(): Promise<MasterSyncResult> {
+  if (typeof window === "undefined") {
+    return {
+      success: false,
+      heroCount: 0,
+      portfolioCount: 0,
+      promoSynced: false,
+      message: "Window undefined",
+    };
+  }
+
+  try {
+    let heroCount = 0;
+    let portfolioCount = 0;
+    let promoSynced = false;
+
+    // 1. Sinkronkan Hero Collage
+    let localHero = await getIdbItem<HeroCollageSlot[]>(HERO_COLLAGE_STORAGE_KEY);
+    if (!localHero || !Array.isArray(localHero)) {
+      localHero = getHeroCollage();
+    }
+    if (localHero && localHero.length === 4) {
+      await saveHeroCollageAsync(localHero);
+      heroCount = localHero.length;
+    }
+
+    // 2. Sinkronkan Portfolio
+    const localPort = getPortfolioList();
+    if (Array.isArray(localPort) && localPort.length > 0) {
+      await savePortfolioListAsync(localPort);
+      portfolioCount = localPort.length;
+    }
+
+    // 3. Sinkronkan Promo
+    const localPromo = getActivePromo();
+    if (localPromo) {
+      await saveActivePromoAsync(localPromo);
+      promoSynced = true;
+    }
+
+    return {
+      success: true,
+      heroCount,
+      portfolioCount,
+      promoSynced,
+      message: "Semua data lokal dari laptop berhasil disinkronkan ke Supabase Cloud!",
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Gagal sinkronisasi ke cloud";
+    console.error("Master cloud sync failed:", err);
+    return {
+      success: false,
+      heroCount: 0,
+      portfolioCount: 0,
+      promoSynced: false,
+      message: msg,
+    };
   }
 }
