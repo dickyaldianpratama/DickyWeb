@@ -8,7 +8,7 @@ import { PortfolioCard } from "../portfolio/PortfolioCard";
 import { Briefcase, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 6;
 
 export const PortfolioSection: React.FC = () => {
   // Gunakan data bawaan sebagai state awal agar rendering server (SSR) dan client 100% identik
@@ -74,7 +74,7 @@ export const PortfolioSection: React.FC = () => {
 
   return (
     <section id="portfolio" className="py-24 bg-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Seksi */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div className="space-y-3 max-w-xl">
@@ -125,7 +125,7 @@ export const PortfolioSection: React.FC = () => {
                     x: slideDirection > 0 ? -30 : slideDirection < 0 ? 30 : 0,
                   }}
                   transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
                 >
                   {displayedItems.map((item) => (
                     <PortfolioCard key={item.id} item={item} />

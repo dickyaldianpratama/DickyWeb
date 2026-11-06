@@ -29,9 +29,9 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
-  // Animasi 3D tilt yang halus & proporsional
-  const rotateX = useTransform(smoothY, [-0.5, 0.5], ["6.5deg", "-6.5deg"]);
-  const rotateY = useTransform(smoothX, [-0.5, 0.5], ["-7.5deg", "7.5deg"]);
+  // Animasi 3D tilt yang halus & proporsional (subtle luxury feel)
+  const rotateX = useTransform(smoothY, [-0.5, 0.5], ["3.5deg", "-3.5deg"]);
+  const rotateY = useTransform(smoothX, [-0.5, 0.5], ["-4.5deg", "4.5deg"]);
 
   // Glare / Kilau pantulan cahaya mengikuti kursor secara dinamis
   const glareX = useTransform(smoothX, [-0.5, 0.5], ["15%", "85%"]);
@@ -99,8 +99,20 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
   return (
     <div
       style={{ perspective: 1000 }}
-      className="w-full select-none"
+      className="group relative w-full select-none"
     >
+      {/* Curved Ambient Shadow:
+          Ditempatkan di luar elemen 3D agar sudut membulat (border-radius) 100% terjaga
+          dan TIDAK menimbulkan proyeksi bayangan kotak kaku 90 derajat di browser saat kartu dimiringkan */}
+      <div
+        className={`absolute inset-1 sm:inset-1.5 rounded-2xl sm:rounded-3xl pointer-events-none transition-all duration-300 -z-10 ${
+          isHovered
+            ? "bg-slate-900/15 blur-xl opacity-100 scale-[1.015]"
+            : "bg-slate-950/5 blur-md opacity-25 scale-100"
+        }`}
+        aria-hidden="true"
+      />
+
       <motion.div
         ref={cardRef}
         onPointerMove={handlePointerMove}
@@ -110,13 +122,16 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
         style={{
           rotateX,
           rotateY,
-          transformStyle: "preserve-3d",
           willChange: "transform",
           backfaceVisibility: "hidden",
           WebkitBackfaceVisibility: "hidden",
+          borderRadius: "1.25rem",
+          WebkitMaskImage: "-webkit-radial-gradient(white, black)",
+          maskImage: "radial-gradient(white, black)",
+          isolation: "isolate",
         }}
         animate={{
-          scale: isHovered ? 1.025 : 1,
+          scale: isHovered ? 1.018 : 1,
         }}
         transition={{
           type: "spring",
@@ -124,11 +139,11 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
           damping: 22,
           mass: 0.5,
         }}
-        className="group relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-pointer bg-slate-900 border border-slate-200/80 hover:border-slate-300 shadow-sm hover:shadow-xl transition-[border-color,box-shadow] duration-300"
+        className="relative w-full aspect-[16/10] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer bg-slate-900 border border-slate-200/80 hover:border-blue-400/50 transition-colors duration-300"
       >
         {/* WADAH GAMBAR: Mengikuti pengaturan imageFit & imagePosition dari Admin */}
         <div
-          className={`absolute inset-0 w-full h-full overflow-hidden pointer-events-none ${
+          className={`absolute inset-0 w-full h-full overflow-hidden pointer-events-none rounded-2xl sm:rounded-3xl ${
             imageFit === "contain" ? "p-2 sm:p-3 flex items-center justify-center bg-slate-950" : ""
           }`}
         >
@@ -136,7 +151,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
             src={item.image}
             alt={item.title}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             quality={95}
             className={`${fitClass} ${positionClass} w-full h-full transition-transform duration-500 ease-out`}
             style={{
@@ -149,7 +164,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
           />
         </div>
 
-        {/* Dynamic Light Sheen / Kilau Pantulan 3D Halus */}
+        {/* Dynamic Light Sheen / Kilau Pantulan Halus */}
         <motion.div
           className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-10"
           style={{
@@ -162,21 +177,18 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 via-35% to-transparent pointer-events-none z-10" />
 
         {/* KONTEN BAWAH KARTU: Glassmorphism Badge Kategori, Judul, & Tombol Bulat */}
-        <div
-          className="absolute inset-x-0 bottom-0 p-4 sm:p-5 flex items-end justify-between gap-3 z-20"
-          style={{ transform: "translateZ(20px)" }}
-        >
+        <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-4 flex items-end justify-between gap-2.5 z-20">
           {/* Sisi Kiri: Glassmorphism Badge Kategori & Judul Proyek */}
-          <div className="space-y-1.5 max-w-[85%] min-w-0 pointer-events-none">
+          <div className="space-y-1 max-w-[85%] min-w-0 pointer-events-none">
             {/* Pill Badge Kategori Glassmorphism (efek kaca tembus pandang, background gambar terlihat) */}
             <div className="inline-flex items-center">
-              <span className="px-2.5 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase shadow-[0_4px_14px_rgba(0,0,0,0.25)] drop-shadow-sm">
+              <span className="px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase shadow-xs">
                 {item.category || "WEBSITE"}
               </span>
             </div>
 
             {/* Judul Proyek: Clean, proporsional, elegan */}
-            <h3 className="text-sm sm:text-base font-bold text-white font-poppins leading-snug tracking-tight drop-shadow-sm line-clamp-1 sm:line-clamp-2">
+            <h3 className="text-xs sm:text-sm font-bold text-white font-poppins leading-snug tracking-tight drop-shadow-sm line-clamp-1 sm:line-clamp-2">
               {item.title}
             </h3>
           </div>
