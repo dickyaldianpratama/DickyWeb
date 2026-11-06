@@ -15,25 +15,60 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      // Jika user mulai scrolling saat menu terbuka, otomatis tutup menu
+      if (mobileMenuOpen && window.scrollY > 10) {
+        setMobileMenuOpen(false);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [mobileMenuOpen]);
+
+  // Kunci scroll body saat mobile menu dibuka dan beri tahu FloatingCTA agar sembunyi
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+      window.dispatchEvent(
+        new CustomEvent("mobile_menu_state", { detail: { open: true } })
+      );
+    } else {
+      document.body.style.overflow = "";
+      window.dispatchEvent(
+        new CustomEvent("mobile_menu_state", { detail: { open: false } })
+      );
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 border-b border-solid transition-[background-color,border-color,padding,box-shadow] duration-200 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-200 border-b ${
         mobileMenuOpen
-          ? "bg-white border-slate-200 shadow-none py-3 sm:py-3.5"
+          ? "bg-white border-slate-200 shadow-none"
           : isScrolled
-          ? "bg-white/95 backdrop-blur-xl shadow-xs border-slate-200/90 py-2.5 sm:py-3"
-          : "bg-white/95 backdrop-blur-md shadow-xs border-slate-200/90 py-3.5 sm:py-4"
+          ? "bg-white/95 backdrop-blur-xl shadow-xs border-slate-200/90"
+          : "bg-white/95 backdrop-blur-md shadow-xs border-slate-200/90"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Top Navbar Bar: padding vertikal ada di sini agar tidak menyisakan ruang kotak di bawah drawer */}
+      <div
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-[padding] duration-200 ${
+          mobileMenuOpen
+            ? "py-3 sm:py-3.5 border-b border-slate-100"
+            : isScrolled
+            ? "py-2.5 sm:py-3"
+            : "py-3.5 sm:py-4"
+        }`}
+      >
         <div className="flex items-center justify-between">
           {/* Brand Logo DickyWeb */}
-          <Link href="#home" className="flex items-center gap-2 group">
+          <Link
+            href="#home"
+            className="flex items-center gap-2 group"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             <div className="relative h-10 w-36 sm:h-12 sm:w-44 flex items-center">
               <Image
                 src={siteConfig.logoUrl}
@@ -90,9 +125,9 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu: tepat menempel di bawah top bar, tanpa kotak/padding ekstra */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-b border-slate-200/80 px-6 py-6 shadow-none max-h-[calc(100vh-70px)] overflow-y-auto">
+        <div className="md:hidden bg-white px-6 py-5 shadow-none max-h-[calc(100vh-80px)] overflow-y-auto">
           <nav className="flex flex-col gap-4 text-base font-medium text-slate-700">
             {siteConfig.navigation.map((item) => (
               <a

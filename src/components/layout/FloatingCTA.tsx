@@ -14,6 +14,7 @@ export const FloatingCTA: React.FC = () => {
   const [promo, setPromo] = useState<BrochurePromoData>(DEFAULT_PROMO);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPromoVisible, setIsPromoVisible] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Load active promo
@@ -28,6 +29,15 @@ export const FloatingCTA: React.FC = () => {
     // Listen for admin changes
     window.addEventListener("promo_updated", loadPromo);
 
+    // Listen untuk status mobile drawer
+    const handleMenuState = (e: Event) => {
+      const custom = e as CustomEvent<{ open: boolean }>;
+      if (custom.detail !== undefined) {
+        setIsMobileMenuOpen(custom.detail.open);
+      }
+    };
+    window.addEventListener("mobile_menu_state", handleMenuState);
+
     // Deteksi scroll: saat di atas (<= 200px), tombol promo masuk ke WA secara halus
     const handleScroll = () => {
       setIsPromoVisible(window.scrollY > 200);
@@ -38,13 +48,20 @@ export const FloatingCTA: React.FC = () => {
 
     return () => {
       window.removeEventListener("promo_updated", loadPromo);
+      window.removeEventListener("mobile_menu_state", handleMenuState);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2.5">
+      <div
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex flex-col items-end gap-2.5 transition-all duration-300 ${
+          isMobileMenuOpen
+            ? "opacity-0 pointer-events-none scale-75 translate-y-4"
+            : "opacity-100 pointer-events-auto scale-100 translate-y-0"
+        }`}
+      >
         {/* Floating Promo Brochure Pill: Masuk ke dalam WA saat scroll mencapai atas */}
         {promo.isActive && (
           <div
