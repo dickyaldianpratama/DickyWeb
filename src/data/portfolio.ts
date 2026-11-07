@@ -14,16 +14,18 @@ export const portfolioData: PortfolioItem[] = [
     liveUrl: "",
   },
   {
-    id: "aurora-law",
-    title: "Website Firma Hukum Aurora & Partners",
-    client: "Aurora Legal Group",
+    id: "company-profile",
+    title: "Website Company Profile Modern Enterprise",
+    client: "YourCompany Global Tech",
     category: "Company Profile",
     description:
-      "Website profil firma hukum bergaya luxury modern dengan tata letak minimalis, formulir konsultasi terenkripsi, dan katalog rekam jejak kasus.",
-    image: "/images/portfolio/aurora-law.jpg",
-    techStack: ["Next.js", "Tailwind CSS", "TypeScript", "Vercel"],
-    metrics: "Meningkatkan permintaan konsultasi hingga 210%",
-    liveUrl: "",
+      "Website profil korporasi modern berarsitektur glass skyline dengan showcase layanan komputasi awan, artikel thought leadership, dan portal kemitraan multi-halaman interaktif.",
+    image:
+      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_home_page/screen.png",
+    techStack: ["Next.js", "Tailwind CSS", "TypeScript", "Framer Motion"],
+    metrics: "Meningkatkan kepercayaan & leads klien korporat hingga 240%",
+    liveUrl: "/portfolio/company-profile",
+    detailUrl: "/portfolio/company-profile",
   },
   {
     id: "kopi-senja",

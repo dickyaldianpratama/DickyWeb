@@ -180,13 +180,34 @@ export function getPortfolioList(): PortfolioItem[] {
           };
         }
 
-        const matchingDefault = portfolioData.find((d) => d.id === item.id);
+        if (
+          (item.id === "aurora-law" ||
+            item.id === "company-profile" ||
+            item.category?.toLowerCase() === "company profile" ||
+            item.title?.toLowerCase().includes("company profile")) &&
+          (!item.liveUrl || item.liveUrl === "")
+        ) {
+          needsSync = true;
+          updatedItem = {
+            ...updatedItem,
+            liveUrl: "/portfolio/company-profile",
+            detailUrl: "/portfolio/company-profile",
+          };
+        }
+
+        const matchingDefault = portfolioData.find(
+          (d) => d.id === item.id || (item.id === "aurora-law" && d.id === "company-profile")
+        );
         if (
           matchingDefault &&
-          (!item.image || item.image.includes("images.unsplash.com"))
+          (!item.image ||
+            item.image.includes("images.unsplash.com") ||
+            item.image.includes("aurora-law.jpg"))
         ) {
           needsSync = true;
           updatedItem.image = matchingDefault.image;
+          updatedItem.title = matchingDefault.title;
+          updatedItem.liveUrl = matchingDefault.liveUrl;
         }
 
         return updatedItem;

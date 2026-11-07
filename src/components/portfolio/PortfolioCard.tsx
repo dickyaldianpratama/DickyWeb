@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   motion,
   useMotionValue,
@@ -18,6 +19,7 @@ interface PortfolioCardProps {
 }
 
 export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
+  const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -72,10 +74,18 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
     item.title.toLowerCase().includes("coffe") ||
     item.title.toLowerCase().includes("kopi");
 
+  const isCompanyProfile =
+    item.id === "company-profile" ||
+    item.id === "aurora-law" ||
+    item.category?.toLowerCase() === "company profile" ||
+    item.title.toLowerCase().includes("company profile");
+
   const rawUrl = item.liveUrl || item.detailUrl || "";
   const detailUrl =
     rawUrl && !rawUrl.includes("rcsdigitalmandiri.id")
       ? rawUrl
+      : isCompanyProfile
+      ? "/portfolio/company-profile"
       : isCoffeeItem
       ? "https://kopikenangan.com"
       : "";
@@ -93,14 +103,22 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
 
   const handleCardClick = () => {
     if (detailUrl) {
-      window.open(detailUrl, "_blank", "noopener,noreferrer");
+      if (detailUrl.startsWith("/")) {
+        router.push(detailUrl);
+      } else {
+        window.open(detailUrl, "_blank", "noopener,noreferrer");
+      }
     }
   };
 
   const handleButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (detailUrl) {
-      window.open(detailUrl, "_blank", "noopener,noreferrer");
+      if (detailUrl.startsWith("/")) {
+        router.push(detailUrl);
+      } else {
+        window.open(detailUrl, "_blank", "noopener,noreferrer");
+      }
     }
   };
 
@@ -224,7 +242,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white flex items-center justify-center shadow-md text-[#007DFE] hover:bg-slate-50 hover:scale-110 active:scale-90 transition-all duration-200 shrink-0 cursor-pointer pointer-events-auto z-30 ${
               isHovered
                 ? "opacity-100 scale-100 translate-y-0"
-                : "opacity-0 scale-75 translate-y-1.5 pointer-events-none"
+                : "opacity-95 sm:opacity-0 scale-95 sm:scale-75 translate-y-0 sm:translate-y-1.5 pointer-events-auto sm:pointer-events-none"
             }`}
           >
             <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.4] text-[#007DFE] group-hover:scale-105 transition-transform pointer-events-none" />
