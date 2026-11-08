@@ -81,14 +81,20 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
     item.title.toLowerCase().includes("company profile");
 
   const rawUrl = item.liveUrl || item.detailUrl || "";
-  const detailUrl =
-    rawUrl && !rawUrl.includes("rcsdigitalmandiri.id")
-      ? rawUrl
-      : isCompanyProfile
-      ? "/portfolio/company-profile"
-      : isCoffeeItem
-      ? "https://kopikenangan.com"
-      : "";
+  const isDeadOrLegacyUrl =
+    rawUrl.includes("ruangruma") ||
+    rawUrl.includes("rcsdigitalmandiri.id");
+
+  // Jika kartu ini adalah Company Profile ATAU URL tujuannya mengarah ke ruangruma/domain lama yang mati,
+  // SELALU arahkan langsung ke halaman showcase interaktif: /portfolio/company-profile
+  let detailUrl = "";
+  if (isCompanyProfile || isDeadOrLegacyUrl) {
+    detailUrl = "/portfolio/company-profile";
+  } else if (rawUrl) {
+    detailUrl = rawUrl;
+  } else if (isCoffeeItem) {
+    detailUrl = "https://kopikenangan.com";
+  }
 
   // Pengaturan tampilan gambar yang dikontrol admin (Fit & Position)
   const imageFit = item.imageFit || "cover";

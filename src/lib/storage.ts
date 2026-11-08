@@ -147,6 +147,79 @@ export function saveActivePromo(data: BrochurePromoData): boolean {
 
 /* ------------------- PORTFOLIO CRUD STORAGE ------------------- */
 
+/**
+ * Membersihkan dan memastikan konsistensi data portofolio dari LocalStorage / Cloud
+ * Mencegah URL mati lama (ruangruma, rcsdigitalmandiri) dan memastikan Company Profile mengarah ke showcase internal.
+ */
+export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
+  return list.map((item: PortfolioItem) => {
+    let updatedItem = { ...item };
+
+    // 1. Bersihkan link mati atau domain dummy lama
+    if (
+      updatedItem.liveUrl &&
+      (updatedItem.liveUrl.includes("rcsdigitalmandiri.id") ||
+        updatedItem.liveUrl.includes("ruangruma.vercel.app") ||
+        updatedItem.liveUrl.includes("ruangruma"))
+    ) {
+      updatedItem.liveUrl = "";
+    }
+
+    // 2. Hubungkan Company Profile ke halaman showcase internal
+    const isCompanyProfile =
+      updatedItem.id === "company-profile" ||
+      updatedItem.id === "aurora-law" ||
+      updatedItem.category?.toLowerCase() === "company profile" ||
+      updatedItem.title?.toLowerCase().includes("company profile");
+
+    if (isCompanyProfile) {
+      // Jika URL kosong, menunjuk ke ruangruma, atau URL relatif, arahkan ke showcase detail
+      if (
+        !updatedItem.liveUrl ||
+        updatedItem.liveUrl === "" ||
+        updatedItem.liveUrl.includes("ruangruma") ||
+        updatedItem.liveUrl.includes("vercel.app") ||
+        updatedItem.liveUrl.startsWith("/")
+      ) {
+        updatedItem.liveUrl = "/portfolio/company-profile";
+      }
+      updatedItem.detailUrl = "/portfolio/company-profile";
+    }
+
+    // 3. Fallback Coffee Shop
+    if (
+      (updatedItem.id === "kopi-senja" ||
+        updatedItem.title.toLowerCase().includes("coffee") ||
+        updatedItem.title.toLowerCase().includes("kopi")) &&
+      !updatedItem.liveUrl
+    ) {
+      updatedItem.title = updatedItem.title.includes("Senja")
+        ? "Website Toko Online Coffee Kenangan"
+        : updatedItem.title;
+      updatedItem.liveUrl = "https://kopikenangan.com";
+    }
+
+    // 4. Sinkronisasi gambar default jika kosong atau link placeholder
+    const matchingDefault = portfolioData.find(
+      (d) =>
+        d.id === updatedItem.id ||
+        (updatedItem.id === "aurora-law" && d.id === "company-profile")
+    );
+    if (
+      matchingDefault &&
+      (!updatedItem.image ||
+        updatedItem.image.includes("images.unsplash.com") ||
+        updatedItem.image.includes("aurora-law.jpg"))
+    ) {
+      updatedItem.image = matchingDefault.image;
+      updatedItem.title = matchingDefault.title;
+      updatedItem.liveUrl = matchingDefault.liveUrl;
+    }
+
+    return updatedItem;
+  });
+}
+
 export function getPortfolioList(): PortfolioItem[] {
   if (typeof window === "undefined") {
     return portfolioData;
@@ -159,73 +232,8 @@ export function getPortfolioList(): PortfolioItem[] {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      let needsSync = false;
-      const sanitizedList = parsed.map((item: PortfolioItem) => {
-        let updatedItem = { ...item };
-        if (item.liveUrl && item.liveUrl.includes("rcsdigitalmandiri.id")) {
-          needsSync = true;
-          updatedItem.liveUrl = "";
-        }
-        if (
-          (item.id === "kopi-senja" ||
-            item.title.toLowerCase().includes("coffee") ||
-            item.title.toLowerCase().includes("kopi")) &&
-          !item.liveUrl
-        ) {
-          needsSync = true;
-          updatedItem = {
-            ...updatedItem,
-            title: item.title.includes("Senja") ? "Website Toko Online Coffee Kenangan" : item.title,
-            liveUrl: "https://kopikenangan.com",
-          };
-        }
-
-        if (
-          (item.id === "aurora-law" ||
-            item.id === "company-profile" ||
-            item.category?.toLowerCase() === "company profile" ||
-            item.title?.toLowerCase().includes("company profile")) &&
-          (!item.liveUrl || item.liveUrl === "")
-        ) {
-          needsSync = true;
-          updatedItem = {
-            ...updatedItem,
-            liveUrl: "/portfolio/company-profile",
-            detailUrl: "/portfolio/company-profile",
-          };
-        }
-
-        const matchingDefault = portfolioData.find(
-          (d) => d.id === item.id || (item.id === "aurora-law" && d.id === "company-profile")
-        );
-        if (
-          matchingDefault &&
-          (!item.image ||
-            item.image.includes("images.unsplash.com") ||
-            item.image.includes("aurora-law.jpg"))
-        ) {
-          needsSync = true;
-          updatedItem.image = matchingDefault.image;
-          updatedItem.title = matchingDefault.title;
-          updatedItem.liveUrl = matchingDefault.liveUrl;
-        }
-
-        return updatedItem;
-      });
-
-      const hasRuangRuma = sanitizedList.some(
-        (p: PortfolioItem) =>
-          p.id === "kitchen-set-ruangruma" ||
-          (p.title && p.title.toLowerCase().includes("ruangruma"))
-      );
-      if (!hasRuangRuma && portfolioData[0]) {
-        const merged = [portfolioData[0], ...sanitizedList];
-        localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(merged));
-        return merged;
-      }
-      if (needsSync) {
-        localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(sanitizedList));
-      }
+      const sanitizedList = sanitizePortfolioItems(parsed);
+      localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(sanitizedList));
       return sanitizedList;
     }
     return portfolioData;
@@ -246,12 +254,13 @@ export async function getPortfolioListFromCloud(): Promise<PortfolioItem[]> {
   try {
     const cloudItems = await fetchCloudData<PortfolioItem[]>("portfolio");
     if (Array.isArray(cloudItems) && cloudItems.length > 0) {
+      const sanitizedCloudItems = sanitizePortfolioItems(cloudItems);
       try {
-        localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(cloudItems));
+        localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(sanitizedCloudItems));
       } catch {
         // Ignore quota error for localStorage
       }
-      return cloudItems;
+      return sanitizedCloudItems;
     }
   } catch (err) {
     console.warn("Gagal mengambil portofolio dari cloud:", err);
