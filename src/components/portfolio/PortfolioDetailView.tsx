@@ -73,17 +73,19 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
     });
   }, [initialItem]);
 
-  // Siapkan daftar gambar galeri cuplikan halaman (SS-an)
-  const galleryImages: string[] = isCompanyProfile
-    ? companyProfileSlides.map((s) => s.image)
-    : item.gallery && item.gallery.length > 0
-    ? item.gallery
-    : [item.image || "/images/portfolio/company-profile/yourcompany_home_page/screen.png"];
+  // Siapkan daftar gambar galeri cuplikan halaman (SS-an) yang diinput admin
+  const galleryImages: string[] =
+    item.gallery && item.gallery.length > 0
+      ? item.gallery
+      : isCompanyProfile
+      ? companyProfileSlides.map((s) => s.image)
+      : [item.image || "/images/portfolio/company-profile/yourcompany_home_page/screen.png"];
 
   const currentImage = galleryImages[activeImageIndex] || galleryImages[0];
-  const currentSlideInfo: ShowcaseSlideInfo | null = isCompanyProfile
-    ? companyProfileSlides[activeImageIndex] || companyProfileSlides[0]
-    : null;
+  const currentSlideInfo: ShowcaseSlideInfo | null =
+    isCompanyProfile && (!item.gallery || item.gallery.length === 0)
+      ? companyProfileSlides[activeImageIndex] || companyProfileSlides[0]
+      : null;
 
   // Proyek terkait (3 proyek selain proyek aktif)
   const relatedProjects = allItems

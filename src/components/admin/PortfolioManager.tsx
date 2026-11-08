@@ -29,6 +29,7 @@ import {
   Maximize2,
   Minimize2,
   ArrowUpRight,
+  Layers,
 } from "lucide-react";
 
 const CATEGORY_OPTIONS = [
@@ -47,11 +48,12 @@ export const PortfolioManager: React.FC = () => {
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
   const [successToast, setSuccessToast] = useState("");
 
-  // Form State: Judul, Kategori, Direct URL, Gambar, & Tools Pengaturan Tampilan Gambar
+  // Form State: Judul, Kategori, Direct URL, Gambar Cover, Galeri Cuplikan Detail, & Tools Tampilan
   const [formData, setFormData] = useState({
     title: "",
     category: "WEBSITE",
     image: "",
+    gallery: [] as string[],
     liveUrl: "",
     imageFit: "cover" as "cover" | "contain",
     imagePosition: "top" as "top" | "center" | "bottom",
@@ -61,6 +63,11 @@ export const PortfolioManager: React.FC = () => {
   const [isCompressing, setIsCompressing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // State untuk upload & input galeri cuplikan halaman detail
+  const [galleryInputUrl, setGalleryInputUrl] = useState("");
+  const [isCompressingGallery, setIsCompressingGallery] = useState(false);
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
 
   // Load items
   useEffect(() => {
@@ -92,10 +99,12 @@ export const PortfolioManager: React.FC = () => {
       title: "",
       category: "WEBSITE",
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+      gallery: [],
       liveUrl: "",
       imageFit: "cover",
       imagePosition: "top",
     });
+    setGalleryInputUrl("");
     setIsModalOpen(true);
   };
 
@@ -106,14 +115,21 @@ export const PortfolioManager: React.FC = () => {
       title: item.title,
       category: item.category,
       image: item.image,
+      gallery:
+        Array.isArray(item.gallery) && item.gallery.length > 0
+          ? [...item.gallery]
+          : item.image
+          ? [item.image]
+          : [],
       liveUrl: item.liveUrl || "",
       imageFit: item.imageFit || "cover",
       imagePosition: item.imagePosition || "top",
     });
+    setGalleryInputUrl("");
     setIsModalOpen(true);
   };
 
-  // Upload file gambar dari komputer dengan kompresi otomatis
+  // Upload file gambar cover dari komputer dengan kompresi otomatis
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -141,12 +157,75 @@ export const PortfolioManager: React.FC = () => {
     }
   };
 
+  // Upload cuplikan galeri halaman detail (bisa banyak file sekaligus) dengan kompresi ringan WebP
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      setIsCompressingGallery(true);
+      const compressedList: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith("image/") && !file.name.toLowerCase().endsWith(".gif")) {
+          continue;
+        }
+        // Kompresi resolusi HD (1280x800) kualitas 0.75 WebP/JPEG (sangat ringan ~40KB - 80KB)
+        const compressed = await compressImage(file, 1280, 800, 0.75);
+        compressedList.push(compressed);
+      }
+
+      if (compressedList.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          gallery: [...prev.gallery, ...compressedList],
+        }));
+      }
+    } catch (err) {
+      console.error("Gagal kompresi foto galeri:", err);
+      alert("Terjadi kendala saat memproses gambar.");
+    } finally {
+      setIsCompressingGallery(false);
+      if (galleryFileInputRef.current) {
+        galleryFileInputRef.current.value = "";
+      }
+    }
+  };
+
+  // Tambah URL gambar ke galeri cuplikan
+  const handleAddGalleryUrl = () => {
+    if (!galleryInputUrl.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      gallery: [...prev.gallery, galleryInputUrl.trim()],
+    }));
+    setGalleryInputUrl("");
+  };
+
+  // Hapus satu foto dari galeri cuplikan
+  const handleRemoveGalleryImage = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      gallery: prev.gallery.filter((_, idx) => idx !== indexToRemove),
+    }));
+  };
+
+  // Jadikan salah satu foto galeri sebagai cover utama kartu
+  const handleSetGalleryImageAsCover = (imgUrl: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: imgUrl,
+    }));
+    showNotification("Foto berhasil ditetapkan sebagai cover utama kartu!");
+  };
+
   // Submit Simpan
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title.trim() || !formData.image.trim()) {
-      alert("Judul proyek dan gambar wajib diisi!");
+      alert("Judul proyek dan gambar cover wajib diisi!");
       return;
     }
 
@@ -158,6 +237,10 @@ export const PortfolioManager: React.FC = () => {
         title: formData.title.trim(),
         category: formData.category.trim() || "WEBSITE",
         image: formData.image.trim(),
+        gallery:
+          formData.gallery.length > 0
+            ? formData.gallery
+            : [formData.image.trim()],
         imageFit: formData.imageFit,
         imagePosition: formData.imagePosition,
         client: editingItem?.client || formData.title.trim(),
@@ -696,7 +779,170 @@ export const PortfolioManager: React.FC = () => {
                 )}
               </div>
 
-              {/* 6. Tombol Simpan & Batal */}
+              {/* 6. INPUT FOTO CUPLIKAN HALAMAN DETAIL (GALERI SS-AN WEBSITE) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/40 border border-blue-200/80 space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-[#007DFE]" />
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 font-poppins">
+                        Foto Cuplikan Halaman Detail (Galeri SS-an)
+                      </h4>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      Foto/tangkapan layar halaman ini akan otomatis ditampilkan pada slider halaman detail saat pengunjung mengklik kartu pada hasil karya.
+                    </p>
+                  </div>
+                  <span className="shrink-0 px-2.5 py-1 rounded-full bg-blue-100 text-[#007DFE] text-[10px] font-bold">
+                    {formData.gallery.length} Foto
+                  </span>
+                </div>
+
+                {/* Input File Multi-Upload dengan Auto-Kompresi Ringan */}
+                <div>
+                  <input
+                    type="file"
+                    ref={galleryFileInputRef}
+                    multiple
+                    accept="image/*,.gif"
+                    onChange={handleGalleryUpload}
+                    className="hidden"
+                  />
+                  <div
+                    onClick={() => !isCompressingGallery && galleryFileInputRef.current?.click()}
+                    className="border-2 border-dashed border-blue-300 hover:border-[#007DFE] rounded-xl p-4 text-center cursor-pointer transition-all bg-white hover:bg-blue-50/50 shadow-2xs"
+                  >
+                    {isCompressingGallery ? (
+                      <div className="py-2 flex flex-col items-center">
+                        <Loader2 className="w-5 h-5 text-[#007DFE] animate-spin mb-1" />
+                        <p className="text-xs font-semibold text-slate-700">
+                          Mengompresi foto agar ukuran ringan...
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="w-9 h-9 rounded-full bg-blue-50 text-[#007DFE] flex items-center justify-center">
+                          <Upload className="w-4 h-4" />
+                        </div>
+                        <p className="text-xs font-bold text-slate-800">
+                          Klik untuk Tambah Foto Cuplikan (Bisa Pilih Banyak Sekaligus)
+                        </p>
+                        <p className="text-[10.5px] text-slate-500">
+                          Syarat ukuran ringan: Otomatis dioptimasi WebP resolusi HD (~40KB–80KB) agar website sangat cepat & hemat memori.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Input Link URL Foto Cuplikan */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={galleryInputUrl}
+                    onChange={(e) => setGalleryInputUrl(e.target.value)}
+                    placeholder="Atau tempel URL gambar eksternal (https://...)"
+                    className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#007DFE]"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddGalleryUrl();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddGalleryUrl}
+                    disabled={!galleryInputUrl.trim()}
+                    className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:text-[#007DFE] hover:border-blue-300 disabled:opacity-50 transition-colors cursor-pointer shrink-0"
+                  >
+                    + Tambah URL
+                  </button>
+                </div>
+
+                {/* Grid Pratinjau Daftar Foto Cuplikan */}
+                {formData.gallery.length > 0 ? (
+                  <div className="space-y-2">
+                    <div className="text-[11px] font-semibold text-slate-600 flex items-center justify-between">
+                      <span>Daftar Slide Cuplikan Halaman:</span>
+                      <span className="text-[10px] text-slate-400">
+                        Akan tampil berurutan dari kiri ke kanan di halaman detail
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-60 overflow-y-auto p-1 scrollbar-thin">
+                      {formData.gallery.map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          className="relative aspect-[16/10] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 group shadow-xs"
+                        >
+                          <Image
+                            src={imgUrl}
+                            alt={`Cuplikan ${idx + 1}`}
+                            fill
+                            sizes="150px"
+                            className="object-cover object-top"
+                          />
+
+                          {/* Badge Nomor Urut */}
+                          <span className="absolute top-1.5 left-1.5 z-10 rounded-md bg-slate-900/80 backdrop-blur-xs px-1.5 py-0.5 text-[9px] font-bold text-white">
+                            #{idx + 1}
+                          </span>
+
+                          {/* Label Ukuran Ringan */}
+                          <span className="absolute bottom-1.5 left-1.5 z-10 rounded bg-emerald-500/90 text-[8.5px] font-semibold text-white px-1 py-0.5">
+                            Ringan (WebP)
+                          </span>
+
+                          {/* Tombol Hapus */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveGalleryImage(idx)}
+                            className="absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white flex items-center justify-center transition-transform hover:scale-110 shadow-sm cursor-pointer"
+                            title="Hapus foto cuplikan ini"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Tombol Jadikan Cover */}
+                          {formData.image !== imgUrl && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetGalleryImageAsCover(imgUrl)}
+                              className="absolute bottom-1.5 right-1.5 z-10 rounded bg-white/90 hover:bg-white text-slate-800 text-[9px] font-bold px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm cursor-pointer"
+                              title="Jadikan foto cover utama kartu"
+                            >
+                              Jadikan Cover
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-3 px-3 rounded-xl bg-white/80 border border-dashed border-slate-300 text-center">
+                    <p className="text-xs text-slate-500 font-medium">
+                      Belum ada foto cuplikan halaman detail.
+                    </p>
+                    {formData.image && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            gallery: [prev.image],
+                          }))
+                        }
+                        className="mt-1.5 text-xs text-[#007DFE] font-bold hover:underline cursor-pointer"
+                      >
+                        + Gunakan Foto Cover sebagai Slide Cuplikan Pertama
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 7. Tombol Simpan & Batal */}
               <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
                 <button
                   type="button"

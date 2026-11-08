@@ -307,6 +307,31 @@ export async function savePortfolioListAsync(items: PortfolioItem[]): Promise<bo
         console.error(`Gagal upload foto portofolio ${finalItem.id}:`, err);
       }
     }
+
+    // Upload galeri cuplikan jika masih berupa base64
+    if (Array.isArray(finalItem.gallery) && finalItem.gallery.length > 0) {
+      const uploadedGallery: string[] = [];
+      for (let i = 0; i < finalItem.gallery.length; i++) {
+        const galleryImg = finalItem.gallery[i];
+        if (galleryImg && galleryImg.startsWith("data:")) {
+          try {
+            const publicUrl = await uploadMediaToCloud(
+              galleryImg,
+              "portfolio",
+              `portfolio-${finalItem.id}-gallery-${i}-${Date.now()}.jpg`
+            );
+            uploadedGallery.push(publicUrl || galleryImg);
+          } catch (err) {
+            console.error(`Gagal upload foto galeri ${finalItem.id} index ${i}:`, err);
+            uploadedGallery.push(galleryImg);
+          }
+        } else {
+          uploadedGallery.push(galleryImg);
+        }
+      }
+      finalItem.gallery = uploadedGallery;
+    }
+
     updatedItems.push(finalItem);
   }
 
