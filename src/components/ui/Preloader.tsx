@@ -10,28 +10,43 @@ export const Preloader: React.FC = () => {
   const [isMounted, setIsMounted] = useState(true);
 
   useEffect(() => {
-    // Timer progres loading sinematik, halus & lebih responsif (2.1 detik)
+    // Timer progres loading berbobot & bertahap:
+    // 1. Bergerak cepat dari 0% menuju 50%
+    // 2. Melambat dan bergerak bertahap dari 50% menuju 85%
+    // 3. Berakselerasi halus dari 85% hingga mencapai 100%
     const startTime = Date.now();
-    const duration = 2100;
+    const duration = 3400; // 3.4 detik (ritme lebih natural, elegan & tidak terburu-buru)
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const t = Math.min(1, elapsed / duration);
 
-      // Smooth cubic easeOut agar loading meluncur halus dan stabil
-      const easedT = 1 - Math.pow(1 - t, 3);
+      let currentPercent = 0;
+      if (t < 0.28) {
+        // Fase 1: Bergerak cepat dari 0% ke 50% (durasi ~0.95 detik)
+        const p = t / 0.28;
+        currentPercent = (1 - Math.pow(1 - p, 2)) * 50;
+      } else if (t < 0.78) {
+        // Fase 2: Melambat & melaju bertahap dari 50% ke 85% (durasi ~1.7 detik)
+        const p = (t - 0.28) / (0.78 - 0.28);
+        currentPercent = 50 + p * 35;
+      } else {
+        // Fase 3: Berakselerasi halus dari 85% ke 100% (durasi ~0.75 detik)
+        const p = (t - 0.78) / (1 - 0.78);
+        currentPercent = 85 + Math.pow(p, 1.4) * 15;
+      }
 
-      const currentPercent = Math.min(100, Math.round(easedT * 100));
-      setProgress(currentPercent);
+      const rounded = Math.min(100, Math.round(currentPercent));
+      setProgress(rounded);
 
       if (elapsed >= duration) {
         clearInterval(interval);
         setProgress(100);
         setTimeout(() => {
           setIsDone(true);
-        }, 350);
+        }, 450);
       }
-    }, 25);
+    }, 20);
 
     return () => clearInterval(interval);
   }, []);
@@ -127,9 +142,9 @@ export const Preloader: React.FC = () => {
               {/* Baris Status & Persentase */}
               <div className="w-full flex items-center justify-between text-xs px-0.5 mb-1.5">
                 <span className="text-[10.5px] sm:text-[11px] text-slate-500 font-medium tracking-tight truncate max-w-[75%]">
-                  {progress < 35
+                  {progress < 50
                     ? "Menyiapkan sistem..."
-                    : progress < 75
+                    : progress < 85
                     ? "Memuat komponen..."
                     : progress < 100
                     ? "Hampir siap..."
