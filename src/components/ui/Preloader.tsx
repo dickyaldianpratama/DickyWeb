@@ -148,39 +148,26 @@ export const Preloader: React.FC = () => {
                   className="absolute w-12 h-12 rounded-full border border-blue-400/35 pointer-events-none"
                 />
 
-                {/* Wadah Floating & Breathing Emblem Logo */}
+                {/* Wadah Floating & Breathing Emblem Logo (Murni Bulat, Bebas Elemen Kotak/Persegi) */}
                 <motion.div
                   animate={{
-                    y: [0, -3.5, 0],
-                    rotate: [-1.2, 1.2, -1.2],
-                    scale: progress >= 100 ? [1, 1.12, 1.05] : [1, 1.04, 1],
+                    y: [0, -3, 0],
+                    scale: progress >= 100 ? [1, 1.08, 1.04] : [1, 1.03, 1],
                   }}
                   transition={{
                     repeat: Infinity,
                     duration: 2.4,
                     ease: "easeInOut",
                   }}
-                  className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center overflow-hidden rounded-2xl"
+                  className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full"
                 >
-                  {/* Kilau Cahaya (Sheen Beam Sweep) Melintas Miring di Permukaan Logo */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent -rotate-45 pointer-events-none z-10"
-                    animate={{ x: ["-180%", "180%"] }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 2.2,
-                      ease: "easeInOut",
-                      repeatDelay: 1,
-                    }}
-                  />
-
-                  {/* Gambar Logo Beresolusi Tinggi */}
+                  {/* Gambar Logo Beresolusi Tinggi Murni Tanpa Bingkai Persegi */}
                   <Image
                     src="/images/logo/dickyweb-icon.png"
                     alt="DickyWeb Icon"
-                    width={60}
-                    height={60}
-                    className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,125,254,0.35)] relative z-0"
+                    width={56}
+                    height={56}
+                    className="w-10 h-10 sm:w-12 sm:h-12 object-contain relative z-10"
                     priority
                   />
                 </motion.div>
