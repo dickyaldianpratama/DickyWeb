@@ -58,32 +58,25 @@ export const Preloader: React.FC = () => {
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white select-none overflow-hidden"
           style={{ willChange: "opacity, transform, filter" }}
         >
-          {/* Ambient Radial Gradient Background */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-50/60 via-white to-white pointer-events-none" />
-
-          {/* Soft Ambient Glow di Belakang Ikon */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
+          {/* Ambient Soft Radial Gradient: Halus, Murni & Bebas Garis Kotak */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,125,254,0.06)_0%,_rgba(255,255,255,0.9)_55%,_#ffffff_100%)] pointer-events-none" />
 
           {/* Konten Utama: Bulatan Ikon Kompak, Modern & Bersih */}
           <div className="relative z-10 flex flex-col items-center justify-center px-4">
-            {/* Wadah Bulatan: Ukuran Kompak (w-24 h-24 / 96px) dengan Circular SVG Progress Ring */}
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
-              {/* Micro-Orbit Ring Berputar Pelan di Luar Lingkaran (High-Tech Feel) */}
-              <div className="absolute -inset-2.5 sm:-inset-3 rounded-full border border-dashed border-blue-400/25 pointer-events-none animate-[spin_24s_linear_infinite]" />
-
-              {/* Halo Glow Ring Halus */}
-              <div className="absolute inset-0 rounded-full bg-blue-500/5 blur-sm pointer-events-none" />
+            {/* Wadah Bulatan Utama: Rasio Presisi 1:1, Bebas Distorsi & Bersih */}
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28 aspect-square shrink-0 flex items-center justify-center">
+              {/* Soft Circular Inner Backdrop (Lembut, Murni Bulat Sempurna Tanpa Kotak/Garis Kaku) */}
+              <div className="absolute inset-1.5 rounded-full bg-gradient-to-b from-blue-50/70 to-blue-50/20 border border-blue-100/40 pointer-events-none shadow-xs" />
 
               {/* Circular SVG Progress Ring */}
               <svg
-                className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-10"
+                className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-10 overflow-visible"
                 viewBox="0 0 100 100"
               >
                 <defs>
                   <linearGradient id="preloader-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#007DFE" />
-                    <stop offset="60%" stopColor="#00B4D8" />
+                    <stop offset="50%" stopColor="#00B4D8" />
                     <stop offset="100%" stopColor="#38BDF8" />
                   </linearGradient>
                 </defs>
@@ -98,7 +91,7 @@ export const Preloader: React.FC = () => {
                   strokeWidth="3"
                 />
 
-                {/* Active Circular Progress Stroke (Gradien Biru Terang & Bercahaya) */}
+                {/* Active Circular Progress Stroke (Halus, Presisi, Anti-Garis Kaku) */}
                 <circle
                   cx="50"
                   cy="50"
@@ -109,68 +102,34 @@ export const Preloader: React.FC = () => {
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
-                  className="transition-[stroke-dashoffset] duration-75 ease-out drop-shadow-[0_0_8px_rgba(0,125,254,0.45)]"
+                  className="transition-[stroke-dashoffset] duration-75 ease-out"
                 />
               </svg>
 
-              {/* Ikon Emblem Logo DickyWeb dengan Animasi Modern & Profesional */}
+              {/* Ikon Emblem Logo DickyWeb (Murni Mengapung Halus & Bebas Elemen Kaku) */}
               <motion.div
-                initial={{ scale: 0.7, opacity: 0, filter: "blur(6px)" }}
-                animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{
+                  scale: progress >= 100 ? [1, 1.06, 1.02] : [1, 1.03, 1],
+                  y: [0, -2.5, 0],
+                  opacity: 1,
+                }}
+                transition={{
+                  scale: { repeat: Infinity, duration: 2.2, ease: "easeInOut" },
+                  y: { repeat: Infinity, duration: 2.2, ease: "easeInOut" },
+                  opacity: { duration: 0.4 },
+                }}
                 className="relative z-20 flex items-center justify-center pointer-events-none"
               >
-                {/* Aura Glowing Orb di Belakang Logo (Denyut Cahaya Hidup) */}
-                <motion.div
-                  animate={{
-                    scale: [0.85, 1.25, 0.85],
-                    opacity: [0.25, 0.65, 0.25],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.4,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute w-14 h-14 rounded-full bg-gradient-to-tr from-[#007DFE]/30 to-[#00B4D8]/25 blur-lg pointer-events-none"
+                {/* Gambar Logo Beresolusi Tinggi Murni Tanpa Bingkai Persegi */}
+                <Image
+                  src="/images/logo/dickyweb-icon.png"
+                  alt="DickyWeb Icon"
+                  width={56}
+                  height={56}
+                  className="w-10 h-10 sm:w-12 sm:h-12 object-contain select-none"
+                  priority
                 />
-
-                {/* Gelombang Echo Halus Memancar Keluar dari Logo */}
-                <motion.div
-                  animate={{
-                    scale: [0.8, 1.55],
-                    opacity: [0.45, 0],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.4,
-                    ease: "easeOut",
-                  }}
-                  className="absolute w-12 h-12 rounded-full border border-blue-400/35 pointer-events-none"
-                />
-
-                {/* Wadah Floating & Breathing Emblem Logo (Murni Bulat, Bebas Elemen Kotak/Persegi) */}
-                <motion.div
-                  animate={{
-                    y: [0, -3, 0],
-                    scale: progress >= 100 ? [1, 1.08, 1.04] : [1, 1.03, 1],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.4,
-                    ease: "easeInOut",
-                  }}
-                  className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full"
-                >
-                  {/* Gambar Logo Beresolusi Tinggi Murni Tanpa Bingkai Persegi */}
-                  <Image
-                    src="/images/logo/dickyweb-icon.png"
-                    alt="DickyWeb Icon"
-                    width={56}
-                    height={56}
-                    className="w-10 h-10 sm:w-12 sm:h-12 object-contain relative z-10"
-                    priority
-                  />
-                </motion.div>
               </motion.div>
             </div>
 
