@@ -38,11 +38,6 @@ export const Preloader: React.FC = () => {
 
   if (!isMounted) return null;
 
-  // Nilai keliling lingkaran SVG untuk animasi circular progress ring
-  const strokeRadius = 43;
-  const circumference = 2 * Math.PI * strokeRadius; // ~270.17
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
-
   return (
     <AnimatePresence onExitComplete={() => setIsMounted(false)}>
       {!isDone && (
@@ -65,117 +60,70 @@ export const Preloader: React.FC = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 sm:w-80 sm:h-80 bg-blue-500/12 rounded-full blur-3xl pointer-events-none animate-pulse" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-64 sm:h-64 bg-cyan-400/12 rounded-full blur-2xl pointer-events-none" />
 
-          {/* Konten Utama: Bulatan Ikon Kompak, Modern & Bersih */}
+          {/* Konten Utama: Animasi Logo Memantul di Lantai, Modern & Bersih */}
           <div className="relative z-10 flex flex-col items-center justify-center px-4">
-            {/* Wadah Bulatan: Ukuran Presisi dengan Circular SVG Progress Ring & Orbit Halus */}
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 aspect-square shrink-0 flex items-center justify-center">
-              {/* Micro-Orbit Ring Berputar Pelan di Luar Lingkaran (High-Tech Feel) */}
-              <div className="absolute -inset-2.5 sm:-inset-3 rounded-full border border-dashed border-blue-400/25 pointer-events-none animate-[spin_24s_linear_infinite]" />
-
-              {/* Halo Glow Ring Halus */}
-              <div className="absolute inset-0 rounded-full bg-blue-500/8 blur-sm pointer-events-none" />
-
-              {/* Circular SVG Progress Ring */}
-              <svg
-                className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-10 overflow-visible"
-                viewBox="0 0 100 100"
-              >
-                <defs>
-                  <linearGradient id="preloader-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#007DFE" />
-                    <stop offset="60%" stopColor="#00B4D8" />
-                    <stop offset="100%" stopColor="#38BDF8" />
-                  </linearGradient>
-                </defs>
-
-                {/* Track Lingkaran Latar Belakang (Transparan Biru Lembut) */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={strokeRadius}
-                  fill="none"
-                  stroke="rgba(0, 125, 254, 0.12)"
-                  strokeWidth="3"
-                />
-
-                {/* Active Circular Progress Stroke (Gradien Biru Terang & Bercahaya) */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={strokeRadius}
-                  fill="none"
-                  stroke="url(#preloader-blue-grad)"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  className="transition-[stroke-dashoffset] duration-75 ease-out drop-shadow-[0_0_8px_rgba(0,125,254,0.45)]"
-                />
-              </svg>
-
-              {/* Ikon Emblem Logo DickyWeb dengan Sebaran Biru Hidup & 100% Bebas Elemen Kotak */}
+            {/* Stage Animasi Logo Memantul di Lantai (3D Bouncing with Floor Shadow Physics) */}
+            <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex flex-col items-center justify-end pb-2 select-none">
+              {/* Ikon Logo Memantul dengan Efek Squash & Stretch Elastis */}
               <motion.div
-                initial={{ scale: 0.75, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                animate={{
+                  y: [-38, 0, -38],
+                  scaleX: [0.96, 1.15, 0.96],
+                  scaleY: [1.04, 0.85, 1.04],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 0.85,
+                  ease: ["easeIn", "easeOut"],
+                  times: [0, 0.5, 1],
+                }}
                 className="relative z-20 flex items-center justify-center pointer-events-none"
               >
-                {/* Sebaran Biru Murni Bulat Sempurna (Pure Radial Glow, Tanpa Kotak/Garis Kaku) */}
-                <motion.div
-                  animate={{
-                    scale: [0.88, 1.2, 0.88],
-                    opacity: [0.35, 0.75, 0.35],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.4,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,_rgba(0,125,254,0.36)_0%,_rgba(0,180,216,0.2)_45%,_transparent_75%)] pointer-events-none"
+                <Image
+                  src="/images/logo/dickyweb-icon.png"
+                  alt="DickyWeb Icon"
+                  width={64}
+                  height={64}
+                  className="w-14 h-14 sm:w-16 sm:h-16 object-contain select-none drop-shadow-[0_4px_16px_rgba(0,125,254,0.35)]"
+                  priority
                 />
-
-                {/* Gelombang Echo Halus Memancar Keluar dari Logo (Murni Bulat Melingkar) */}
-                <motion.div
-                  animate={{
-                    scale: [0.75, 1.4],
-                    opacity: [0.45, 0],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.4,
-                    ease: "easeOut",
-                  }}
-                  className="absolute inset-0 rounded-full border border-blue-400/40 pointer-events-none"
-                />
-
-                {/* Wadah Floating & Breathing Emblem Logo (Murni Bulat, Bebas Elemen Kotak/Persegi) */}
-                <motion.div
-                  animate={{
-                    y: [0, -2.5, 0],
-                    scale: progress >= 100 ? [1, 1.07, 1.03] : [1, 1.03, 1],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.4,
-                    ease: "easeInOut",
-                  }}
-                  className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full"
-                >
-                  {/* Gambar Logo Beresolusi Tinggi Murni Tanpa Bingkai Persegi */}
-                  <Image
-                    src="/images/logo/dickyweb-icon.png"
-                    alt="DickyWeb Icon"
-                    width={48}
-                    height={48}
-                    className="w-8 h-8 sm:w-9 sm:h-9 object-contain relative z-10 select-none drop-shadow-[0_2px_8px_rgba(0,125,254,0.3)]"
-                    priority
-                  />
-                </motion.div>
               </motion.div>
+
+              {/* Bayangan di Lantai (Membesar & Menajam Saat Logo Menyentuh Lantai) */}
+              <motion.div
+                animate={{
+                  scaleX: [0.55, 1.25, 0.55],
+                  scaleY: [0.55, 1.15, 0.55],
+                  opacity: [0.18, 0.65, 0.18],
+                  filter: ["blur(4px)", "blur(1.5px)", "blur(4px)"],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 0.85,
+                  ease: ["easeIn", "easeOut"],
+                  times: [0, 0.5, 1],
+                }}
+                className="w-12 h-2.5 sm:w-14 sm:h-3 rounded-[100%] bg-gradient-to-r from-[#007DFE]/40 via-slate-800/40 to-[#007DFE]/40 mt-1 pointer-events-none"
+              />
+
+              {/* Riak Kontak Lantai (Subtle Floor Impact Ripple Saat Logo Mendarat) */}
+              <motion.div
+                animate={{
+                  scale: [0.7, 1.35, 0.7],
+                  opacity: [0, 0.45, 0],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 0.85,
+                  ease: ["easeIn", "easeOut"],
+                  times: [0, 0.5, 1],
+                }}
+                className="absolute bottom-2.5 w-14 h-3.5 rounded-[100%] border border-[#007DFE]/35 pointer-events-none"
+              />
             </div>
 
             {/* Bagian Status & Progress Bar Ramping */}
-            <div className="mt-5 w-44 sm:w-48 flex flex-col items-center">
+            <div className="mt-4 w-48 sm:w-56 flex flex-col items-center">
               {/* Baris Status & Persentase */}
               <div className="w-full flex items-center justify-between text-xs px-0.5 mb-1.5">
                 <span className="text-[10.5px] sm:text-[11px] text-slate-500 font-medium tracking-tight truncate max-w-[75%]">
