@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { portfolioData } from "@/data/portfolio";
 import { PortfolioDetailView } from "@/components/portfolio/PortfolioDetailView";
 
@@ -10,17 +9,6 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const decodedId = decodeURIComponent(id);
-
-  if (
-    decodedId === "company-profile" ||
-    decodedId === "website-company-profile-modern-enterprise"
-  ) {
-    const item = portfolioData[0];
-    return {
-      title: `${item.title} | Portofolio DickyWeb`,
-      description: item.excerpt,
-    };
-  }
 
   const item =
     portfolioData.find(
@@ -53,13 +41,6 @@ export default async function PortfolioDynamicPage({ params }: PageProps) {
   const { id } = await params;
   const decodedId = decodeURIComponent(id);
 
-  if (
-    decodedId === "company-profile" ||
-    decodedId === "website-company-profile-modern-enterprise"
-  ) {
-    redirect("/portfolio/website-kitchen-set-interior-custom-ruangruma");
-  }
-
   // Cari item berdasarkan id atau slug
   const matchedItem =
     portfolioData.find(
@@ -72,5 +53,15 @@ export default async function PortfolioDynamicPage({ params }: PageProps) {
         (p.slug && decodedId.includes(p.slug))
     ) || portfolioData[0];
 
-  return <PortfolioDetailView item={matchedItem} />;
+  const isCompanyProfile =
+    matchedItem.id === "company-profile" ||
+    matchedItem.slug === "website-company-profile" ||
+    decodedId === "company-profile";
+
+  return (
+    <PortfolioDetailView
+      item={matchedItem}
+      isCompanyProfile={isCompanyProfile}
+    />
+  );
 }

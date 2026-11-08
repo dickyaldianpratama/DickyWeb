@@ -68,9 +68,12 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
   };
 
   // Tautan ke halaman detail produk/proyek (Struktur studi kasus sesuai referensi)
-  const detailUrl = item.slug
-    ? `/portfolio/${item.slug}`
-    : `/portfolio/${item.id}`;
+  const detailUrl =
+    item.id === "company-profile" || item.slug === "website-company-profile"
+      ? "/portfolio/company-profile"
+      : item.slug
+      ? `/portfolio/${item.slug}`
+      : `/portfolio/${item.id}`;
 
   // Pengaturan tampilan gambar yang dikontrol admin (Fit & Position)
   const imageFit = item.imageFit || "cover";

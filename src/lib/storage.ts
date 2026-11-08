@@ -153,21 +153,7 @@ export function saveActivePromo(data: BrochurePromoData): boolean {
  * serta melengkapi data pendukung studi kasus (galeri, durasi, tahun, tantangan, solusi).
  */
 export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
-  return list
-    .filter((item: PortfolioItem) => {
-      // Hapus kartu dummy company profile modern enterprise / YourCompany
-      if (
-        item.id === "company-profile" ||
-        item.slug === "website-company-profile-modern-enterprise" ||
-        (item.title && item.title.toLowerCase().includes("modern enterprise")) ||
-        (item.title && item.title.toLowerCase().includes("company profile modern")) ||
-        (item.client && item.client.toLowerCase().includes("yourcompany"))
-      ) {
-        return false;
-      }
-      return true;
-    })
-    .map((item: PortfolioItem) => {
+  return list.map((item: PortfolioItem) => {
     let updatedItem = { ...item };
 
     // 1. Bersihkan link mati atau domain dummy lama

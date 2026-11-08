@@ -2,6 +2,51 @@ import { PortfolioItem } from "@/types/portfolio.types";
 
 export const portfolioData: PortfolioItem[] = [
   {
+    id: "company-profile",
+    slug: "website-company-profile",
+    title: "Website Company Profile",
+    client: "Corporate Enterprise Client",
+    category: "Company Profile",
+    duration: "2 Minggu",
+    year: "2026",
+    excerpt:
+      "Studi kasus rancangan website profil korporasi modern berarsitektur glass skyline oleh DickyWeb: 8 halaman terstruktur, kapabilitas cloud & AI, artikel wawasan teknologi, dan portal kemitraan enterprise.",
+    description:
+      "Website company profile modern berarsitektur glass skyline dengan showcase layanan komputasi awan, artikel thought leadership, dan portal kemitraan multi-halaman interaktif.",
+    aboutProject:
+      "Website Company Profile ini dirancang khusus untuk memproyeksikan citra korporasi berstandar global. Memadukan arsitektur visual modern 'Tech Glass Skyline' dengan tata letak multi-halaman terstruktur yang menyajikan profil perusahaan, katalog solusi digital, artikel wawasan teknologi, hingga portal kemitraan enterprise.",
+    challenge:
+      "Menyajikan arsitektur informasi yang luas dan kompleks ke dalam tata letak yang bersih, elegan, dan intuitif bagi para eksekutif dan calon mitra bisnis, serta menyediakan mode preview lintas perangkat (Desktop & Mobile) yang responsif dan interaktif.",
+    solutions: [
+      "Arsitektur visual 'Corporate Tech Glass Skyline' dengan estetika modern, profesional, dan mewah",
+      "Struktur 8 halaman lengkap: Beranda, Tentang Kami, Layanan Solusi, Berita & Wawasan, Detail Artikel, Arsip Kategori, Kontak Resmi, dan Konsultasi Kemitraan",
+      "Kotak simulasi interaktif multi-device dengan pilihan dropdown Mode Desktop (1440px) dan Mode App/Mobile (390px) yang dapat di-scroll horizontal",
+      "Portal penjadwalan konsultasi teknologi 30 menit terintegrasi dengan opsi persetujuan kerahasiaan NDA",
+      "Optimasi SEO arsitektur konten dan integrasi saluran korespondensi WhatsApp prioritas 24/7",
+    ],
+    techDescription:
+      "Dikembangkan menggunakan Next.js App Router, Tailwind CSS, TypeScript, dan Framer Motion dengan rancangan sistem desain yang konsisten, berkecepatan tinggi, dan skalabel.",
+    techStack: ["Next.js", "React 19", "Tailwind CSS 4", "TypeScript", "Framer Motion", "WhatsApp API"],
+    metrics: "Kredibilitas Korporat & Kemitraan Naik 240%",
+    results:
+      "Meningkatkan kepercayaan pemangku kepentingan korporat secara signifikan dengan kenaikan permintaan kemitraan B2B mencapai 240% serta apresiasi tinggi dari calon investor terhadap kemewahan desain antarmuka.",
+    image: "/images/portfolio/company-profile/yourcompany_home_page/screen.png",
+    gallery: [
+      "/images/portfolio/company-profile/yourcompany_home_page/screen.png",
+      "/images/portfolio/company-profile/yourcompany_tentang_kami_about_us/screen.png",
+      "/images/portfolio/company-profile/yourcompany_layanan_solusi_digital/screen.png",
+      "/images/portfolio/company-profile/yourcompany_kabar_wawasan_terkini_news_insights/screen.png",
+      "/images/portfolio/company-profile/yourcompany_detail_artikel_mengakselerasi_adopsi_generative_ai_di_perbankan/screen.png",
+      "/images/portfolio/company-profile/yourcompany_arsip_kategori_teknologi_artificial_intelligence/screen.png",
+      "/images/portfolio/company-profile/yourcompany_hubungi_kami_contact_us/screen.png",
+      "/images/portfolio/company-profile/yourcompany_get_in_touch_konsultasi_kemitraan_enterprise/screen.png",
+    ],
+    liveUrl: "",
+    detailUrl: "/portfolio/company-profile",
+    imageFit: "cover",
+    imagePosition: "top",
+  },
+  {
     id: "kitchen-set-ruangruma",
     slug: "website-kitchen-set-interior-custom-ruangruma",
     title: "Website Kitchen Set & Interior RuangRuma",
