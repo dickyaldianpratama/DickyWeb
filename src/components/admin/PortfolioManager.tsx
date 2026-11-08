@@ -6,7 +6,9 @@ import { PortfolioItem } from "@/types/portfolio.types";
 import {
   getPortfolioList,
   getPortfolioListFromCloud,
+  addPortfolioItem,
   addPortfolioItemAsync,
+  updatePortfolioItem,
   updatePortfolioItemAsync,
   deletePortfolioItemAsync,
 } from "@/lib/storage";
@@ -167,18 +169,26 @@ export const PortfolioManager: React.FC = () => {
       if (editingItem) {
         const success = await updatePortfolioItemAsync(payload);
         if (success) {
+          setItems(getPortfolioList());
           showNotification(`Proyek "${payload.title}" berhasil diperbarui ke Supabase Cloud!`);
           setIsModalOpen(false);
         } else {
-          alert("Gagal memperbarui proyek. Silakan coba lagi.");
+          updatePortfolioItem(payload);
+          setItems(getPortfolioList());
+          showNotification(`Proyek "${payload.title}" disimpan ke penyimpanan lokal.`);
+          setIsModalOpen(false);
         }
       } else {
         const success = await addPortfolioItemAsync(payload);
         if (success) {
+          setItems(getPortfolioList());
           showNotification(`Proyek "${payload.title}" berhasil disimpan ke Supabase Cloud!`);
           setIsModalOpen(false);
         } else {
-          alert("Gagal menambahkan proyek. Silakan coba lagi.");
+          addPortfolioItem(payload);
+          setItems(getPortfolioList());
+          showNotification(`Proyek "${payload.title}" disimpan ke penyimpanan lokal.`);
+          setIsModalOpen(false);
         }
       }
     } finally {
@@ -189,10 +199,9 @@ export const PortfolioManager: React.FC = () => {
   // Hapus
   const handleDelete = async (item: PortfolioItem) => {
     if (confirm(`Yakin ingin menghapus proyek "${item.title}"?`)) {
-      const success = await deletePortfolioItemAsync(item.id);
-      if (success) {
-        showNotification(`Proyek "${item.title}" telah dihapus.`);
-      }
+      await deletePortfolioItemAsync(item.id);
+      setItems(getPortfolioList());
+      showNotification(`Proyek "${item.title}" telah dihapus.`);
     }
   };
 

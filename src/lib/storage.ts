@@ -350,7 +350,10 @@ export async function addPortfolioItemAsync(
   item: Omit<PortfolioItem, "id"> & { id?: string }
 ): Promise<boolean> {
   try {
-    const current = await getPortfolioListFromCloud();
+    let current = await getPortfolioListFromCloud();
+    if (!Array.isArray(current) || current.length === 0) {
+      current = getPortfolioList();
+    }
     const newItem: PortfolioItem = {
       ...item,
       id: item.id || `proyek-${Date.now()}`,
@@ -359,7 +362,19 @@ export async function addPortfolioItemAsync(
     return await savePortfolioListAsync(updated);
   } catch (e) {
     console.error("Failed to add portfolio item async", e);
-    return false;
+    try {
+      const local = getPortfolioList();
+      const newItem: PortfolioItem = {
+        ...item,
+        id: item.id || `proyek-${Date.now()}`,
+      };
+      const updated = [newItem, ...local];
+      localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new Event("portfolio_updated"));
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 
@@ -380,23 +395,76 @@ export function addPortfolioItem(item: Omit<PortfolioItem, "id"> & { id?: string
 
 export async function updatePortfolioItemAsync(updatedItem: PortfolioItem): Promise<boolean> {
   try {
-    const current = await getPortfolioListFromCloud();
-    const index = current.findIndex((p) => p.id === updatedItem.id);
-    if (index === -1) return false;
-    current[index] = updatedItem;
+    let current = await getPortfolioListFromCloud();
+    if (!Array.isArray(current) || current.length === 0) {
+      current = getPortfolioList();
+    }
+
+    // 1. Cari berdasarkan ID yang sama persis
+    let index = current.findIndex((p) => p.id === updatedItem.id);
+
+    // 2. Jika tidak ditemukan berdasarkan ID (misal sinkronisasi ID berubah), cari kemiripan judul atau alias
+    if (index === -1) {
+      index = current.findIndex(
+        (p) =>
+          (p.title && p.title.trim().toLowerCase() === updatedItem.title.trim().toLowerCase()) ||
+          (updatedItem.id === "kitchen-set-ruangruma" && p.id === "company-profile") ||
+          (updatedItem.id === "company-profile" && p.id === "kitchen-set-ruangruma")
+      );
+    }
+
+    // 3. Jika masih tidak ada di cloud, cek data lokal browser
+    if (index === -1) {
+      const localList = getPortfolioList();
+      const localIndex = localList.findIndex((p) => p.id === updatedItem.id);
+      if (localIndex !== -1) {
+        current = localList;
+        index = localIndex;
+      }
+    }
+
+    // 4. Update data jika ditemukan, atau sisipkan di paling atas jika baru
+    if (index !== -1) {
+      current[index] = { ...current[index], ...updatedItem };
+    } else {
+      current.unshift(updatedItem);
+    }
+
     return await savePortfolioListAsync([...current]);
   } catch (e) {
     console.error("Failed to update portfolio item async", e);
-    return false;
+    // Fallback simpan lokal bila terjadi kendala jaringan cloud
+    try {
+      const local = getPortfolioList();
+      const idx = local.findIndex((p) => p.id === updatedItem.id);
+      if (idx !== -1) {
+        local[idx] = { ...local[idx], ...updatedItem };
+      } else {
+        local.unshift(updatedItem);
+      }
+      localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(local));
+      window.dispatchEvent(new Event("portfolio_updated"));
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 
 export function updatePortfolioItem(updatedItem: PortfolioItem): boolean {
   try {
     const current = getPortfolioList();
-    const index = current.findIndex((p) => p.id === updatedItem.id);
-    if (index === -1) return false;
-    current[index] = updatedItem;
+    let index = current.findIndex((p) => p.id === updatedItem.id);
+    if (index === -1) {
+      index = current.findIndex(
+        (p) => p.title && p.title.trim().toLowerCase() === updatedItem.title.trim().toLowerCase()
+      );
+    }
+    if (index !== -1) {
+      current[index] = { ...current[index], ...updatedItem };
+    } else {
+      current.unshift(updatedItem);
+    }
     return savePortfolioList([...current]);
   } catch (e) {
     console.error("Failed to update portfolio item", e);
@@ -406,12 +474,22 @@ export function updatePortfolioItem(updatedItem: PortfolioItem): boolean {
 
 export async function deletePortfolioItemAsync(id: string): Promise<boolean> {
   try {
-    const current = await getPortfolioListFromCloud();
+    let current = await getPortfolioListFromCloud();
+    if (!Array.isArray(current) || current.length === 0) {
+      current = getPortfolioList();
+    }
     const filtered = current.filter((p) => p.id !== id);
     return await savePortfolioListAsync(filtered);
   } catch (e) {
     console.error("Failed to delete portfolio item async", e);
-    return false;
+    try {
+      const local = getPortfolioList().filter((p) => p.id !== id);
+      localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(local));
+      window.dispatchEvent(new Event("portfolio_updated"));
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 
