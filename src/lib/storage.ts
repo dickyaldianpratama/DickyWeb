@@ -153,7 +153,26 @@ export function saveActivePromo(data: BrochurePromoData): boolean {
  * serta melengkapi data pendukung studi kasus (galeri, durasi, tahun, tantangan, solusi).
  */
 export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
-  return list.map((item: PortfolioItem) => {
+  // Singkirkan duplikasi agar tidak ada card ganda antara kitchen-set-ruangruma dan company-profile
+  const seenIds = new Set<string>();
+  const dedupedList: PortfolioItem[] = [];
+
+  for (const item of list) {
+    let normalizedId = item.id;
+    if (normalizedId === "kitchen-set-ruangruma") {
+      normalizedId = "company-profile";
+    }
+    if (seenIds.has(normalizedId)) {
+      continue;
+    }
+    seenIds.add(normalizedId);
+    dedupedList.push({
+      ...item,
+      id: normalizedId,
+    });
+  }
+
+  return dedupedList.map((item: PortfolioItem) => {
     let updatedItem = { ...item };
 
     // 1. Bersihkan link mati atau domain dummy lama

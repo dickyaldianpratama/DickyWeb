@@ -6,7 +6,7 @@ export const portfolioData: PortfolioItem[] = [
     slug: "website-company-profile",
     title: "Website Company Profile",
     client: "Corporate Enterprise Client",
-    category: "Company Profile",
+    category: "WEBSITE",
     duration: "2 Minggu",
     year: "2026",
     excerpt:
@@ -30,7 +30,8 @@ export const portfolioData: PortfolioItem[] = [
     metrics: "Kredibilitas Korporat & Kemitraan Naik 240%",
     results:
       "Meningkatkan kepercayaan pemangku kepentingan korporat secara signifikan dengan kenaikan permintaan kemitraan B2B mencapai 240% serta apresiasi tinggi dari calon investor terhadap kemewahan desain antarmuka.",
-    image: "/images/portfolio/company-profile/yourcompany_home_page/screen.png",
+    image:
+      "https://rqvmxgrdreesbbqscbzr.supabase.co/storage/v1/object/public/dickyweb-media/portfolio/portfolio-kitchen-set-ruangruma-1793977471022.jpg",
     gallery: [
       "/images/portfolio/company-profile/yourcompany_home_page/screen.png",
       "/images/portfolio/company-profile/yourcompany_tentang_kami_about_us/screen.png",
@@ -43,53 +44,6 @@ export const portfolioData: PortfolioItem[] = [
     ],
     liveUrl: "",
     detailUrl: "/portfolio/company-profile",
-    imageFit: "cover",
-    imagePosition: "top",
-  },
-  {
-    id: "kitchen-set-ruangruma",
-    slug: "website-kitchen-set-interior-custom-ruangruma",
-    title: "Website Kitchen Set & Interior RuangRuma",
-    client: "Pak Nurman (RuangRuma)",
-    category: "WEBSITE",
-    duration: "1 Minggu",
-    year: "2026",
-    excerpt:
-      "Studi kasus website kitchen set & interior custom RuangRuma oleh DickyWeb: SEO-friendly, galeri portofolio visual, kalkulator estimasi, dan integrasi konsultasi WhatsApp kilat. Jadi 1 minggu.",
-    description:
-      "Website showcase portofolio interior custom & kitchen set modern dengan galeri resolusi tinggi, integrasi WhatsApp konsultasi, dan katalog desain.",
-    aboutProject:
-      "RuangRuma adalah penyedia jasa kitchen set dan interior custom (backdrop TV, lemari pakaian, kamar tidur, dan mezanin) dengan tagline 'Designed for Living'. Klien membutuhkan website kitchen set yang tampil profesional, berkecepatan tinggi, dan mudah ditemukan di Google, sekaligus mampu mengonversi pengunjung menjadi pelanggan aktif.",
-    challenge:
-      "Menampilkan puluhan hasil proyek interior secara menarik dan beresolusi tajam tanpa memperlambat performa website, membangun struktur landing page yang kuat untuk SEO lokal di mesin pencari Google, serta mempermudah calon pelanggan untuk langsung berkonsultasi via WhatsApp dalam hitungan detik.",
-    solutions: [
-      "Halaman showcase khusus Kitchen Set Custom dan Interior Custom dengan optimasi kata kunci SEO lokal",
-      "Galeri portofolio visual interaktif dengan filter kategori (kitchen set, backdrop TV, kamar & mezanin)",
-      "Kalkulator estimasi biaya interior custom instan untuk memudahkan perhitungan budget klien",
-      "Tombol Konsultasi Gratis dan chat WhatsApp melayang sebagai titik konversi utama 24/7",
-      "Console admin manajemen konten untuk memperbarui proyek interior dan testimoni secara instan tanpa koding",
-      "Desain ultra-responsif yang sangat mulus dan ringan diakses baik melalui smartphone maupun layar desktop",
-    ],
-    techDescription:
-      "Dibangun dengan Next.js dan TypeScript modern di sisi frontend, Tailwind CSS untuk performa styling kilat, serta Framer Motion untuk transisi interaktif yang halus dan responsif di semua perangkat.",
-    techStack: ["Next.js", "React 19", "Tailwind CSS 4", "TypeScript", "Framer Motion", "WhatsApp API"],
-    metrics: "Inquiry konsultasi interior meningkat 280%",
-    results:
-      "Website RuangRuma kini tampil sangat profesional dan elegan, mendongkrak kepercayaan klien pemilik rumah dan apartemen baru. Permintaan konsultasi pembuatan kitchen set dan interior melonjak drastis hingga 280% sejak website diluncurkan.",
-    image: "/images/portfolio/ruangruma/ruangruma-1.webp",
-    gallery: [
-      "/images/portfolio/ruangruma/ruangruma-1.webp",
-      "/images/portfolio/ruangruma/ruangruma-2.webp",
-      "/images/portfolio/ruangruma/ruangruma-3.webp",
-      "/images/portfolio/ruangruma/ruangruma-4.webp",
-      "/images/portfolio/ruangruma/ruangruma-5.webp",
-      "/images/portfolio/ruangruma/ruangruma-6.webp",
-      "/images/portfolio/ruangruma/ruangruma-7.webp",
-      "/images/portfolio/ruangruma/ruangruma-8.webp",
-      "/images/portfolio/ruangruma/ruangruma-9.webp",
-    ],
-    liveUrl: "",
-    detailUrl: "/portfolio/website-kitchen-set-interior-custom-ruangruma",
     imageFit: "cover",
     imagePosition: "top",
   },
@@ -122,7 +76,8 @@ export const portfolioData: PortfolioItem[] = [
     metrics: "Waktu tunggu antrean terpangkas 65%",
     results:
       "Mengurangi antrean fisik hingga 65% dan mendongkrak kepuasan pasien terhadap kecepatan layanan klinik hingga 95%.",
-    image: "/images/portfolio/medika-klinik.jpg",
+    image:
+      "https://rqvmxgrdreesbbqscbzr.supabase.co/storage/v1/object/public/dickyweb-media/portfolio/portfolio-kopi-senja-1793977701298.jpg",
     gallery: [
       "/images/portfolio/medika-klinik.jpg",
       "/images/portfolio/hero/hero-3.jpg",
@@ -160,7 +115,8 @@ export const portfolioData: PortfolioItem[] = [
     metrics: "Akurasi distribusi pupuk naik 99.2%",
     results:
       "Meniadakan selisih stok gudang hingga 99.2% dan mempercepat waktu penerbitan surat jalan dari 4 jam menjadi hanya 5 menit.",
-    image: "/images/portfolio/prospektif-saas.jpg",
+    image:
+      "https://rqvmxgrdreesbbqscbzr.supabase.co/storage/v1/object/public/dickyweb-media/portfolio/portfolio-pt-cakrawala-logistik-1793977515322.jpg",
     gallery: [
       "/images/portfolio/prospektif-saas.jpg",
       "/images/portfolio/hero/hero-1.jpg",
@@ -198,7 +154,8 @@ export const portfolioData: PortfolioItem[] = [
     metrics: "Reservasi armada meningkat 210%",
     results:
       "Meningkatkan konversi pemesanan armada rental sebesar 210% dan memangkas waktu tanya-jawab spesifikasi mobil hingga 70%.",
-    image: "/images/portfolio/hero/hero-2.jpg",
+    image:
+      "https://rqvmxgrdreesbbqscbzr.supabase.co/storage/v1/object/public/dickyweb-media/portfolio/portfolio-luxe-glow-clinic-1793977738354.jpg",
     gallery: [
       "/images/portfolio/hero/hero-2.jpg",
       "/images/portfolio/hero/hero-4.jpg",
@@ -236,7 +193,8 @@ export const portfolioData: PortfolioItem[] = [
     metrics: "Pesanan harian melonjak 340%",
     results:
       "Berhasil memproses lebih dari 400 pesanan bahan pangan setiap minggunya dengan tingkat repeat-order mencapai 78%.",
-    image: "/images/portfolio/aurora-law.jpg",
+    image:
+      "https://rqvmxgrdreesbbqscbzr.supabase.co/storage/v1/object/public/dickyweb-media/portfolio/portfolio-arjuna-property-1793977647031.jpg",
     gallery: [
       "/images/portfolio/aurora-law.jpg",
       "/images/portfolio/hero/hero-4.jpg",
@@ -274,7 +232,8 @@ export const portfolioData: PortfolioItem[] = [
     metrics: "Waktu transaksi otomatis < 10 detik",
     results:
       "Tingkat keberhasilan transaksi otomatis mencapai 99.8% dengan rata-rata waktu proses hanya 7 detik, melayani lebih dari 10.000 transaksi per bulan.",
-    image: "/images/portfolio/prospektif-saas.jpg",
+    image:
+      "https://rqvmxgrdreesbbqscbzr.supabase.co/storage/v1/object/public/dickyweb-media/portfolio/portfolio-sistem-hr-solusindo-1793977778538.jpg",
     gallery: [
       "/images/portfolio/prospektif-saas.jpg",
       "/images/portfolio/hero/hero-3.jpg",

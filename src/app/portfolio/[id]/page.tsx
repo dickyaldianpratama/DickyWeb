@@ -55,12 +55,20 @@ export default async function PortfolioDynamicPage({ params }: PageProps) {
 
   const isCompanyProfile =
     matchedItem.id === "company-profile" ||
+    matchedItem.id === "kitchen-set-ruangruma" ||
     matchedItem.slug === "website-company-profile" ||
-    decodedId === "company-profile";
+    decodedId === "company-profile" ||
+    decodedId === "kitchen-set-ruangruma" ||
+    decodedId.includes("ruangruma") ||
+    decodedId.includes("company-profile");
+
+  const finalItem = isCompanyProfile
+    ? portfolioData.find((p) => p.id === "company-profile") || matchedItem
+    : matchedItem;
 
   return (
     <PortfolioDetailView
-      item={matchedItem}
+      item={finalItem}
       isCompanyProfile={isCompanyProfile}
     />
   );
