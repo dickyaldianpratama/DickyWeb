@@ -16,7 +16,6 @@ import {
   Home as HomeIcon,
   ChevronRight,
   ChevronLeft,
-  ExternalLink,
   MessageSquare,
   Maximize2,
   X,
@@ -26,9 +25,6 @@ import {
   Layers,
   Sparkles,
   ArrowUpRight,
-  Monitor,
-  Smartphone,
-  Eye,
 } from "lucide-react";
 
 interface PortfolioDetailViewProps {
@@ -44,7 +40,6 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [allItems, setAllItems] = useState<PortfolioItem[]>(portfolioData);
-  const [previewMode, setPreviewMode] = useState<"desktop" | "app">("desktop");
 
   const isCompanyProfile =
     initialIsCompanyProfile ||
@@ -78,12 +73,12 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
     });
   }, [initialItem]);
 
-  // Siapkan daftar gambar galeri
+  // Siapkan daftar gambar galeri cuplikan halaman (SS-an)
   const galleryImages: string[] = isCompanyProfile
     ? companyProfileSlides.map((s) => s.image)
     : item.gallery && item.gallery.length > 0
     ? item.gallery
-    : [item.image || "/images/portfolio/ruangruma-clean.png"];
+    : [item.image || "/images/portfolio/company-profile/yourcompany_home_page/screen.png"];
 
   const currentImage = galleryImages[activeImageIndex] || galleryImages[0];
   const currentSlideInfo: ShowcaseSlideInfo | null = isCompanyProfile
@@ -136,8 +131,8 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
       {/* Main Content Body */}
       <main className="flex-1 pb-20 pt-28 sm:pt-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb Navigation Sesuai Permintaan: Beranda > Hasil Karya > Detail Company Profile */}
-          <nav aria-label="Breadcrumb" className="mb-5 min-w-0">
+          {/* Breadcrumb Navigation: Beranda > Hasil Karya > Detail Company Profile */}
+          <nav aria-label="Breadcrumb" className="mb-4 min-w-0">
             <ol className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs sm:text-sm text-slate-500">
               <li className="flex items-center gap-1.5 shrink-0">
                 <Link
@@ -183,166 +178,137 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
             </span>
           </div>
 
-          {/* Main Title Heading */}
-          <div className="mb-8">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight font-poppins leading-tight">
+          {/* Judul Halaman (Clean Bold Sesuai Referensi, Tidak Terlalu Bold) */}
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight font-poppins leading-snug">
               {item.title}
             </h1>
           </div>
 
-          {/* 2-Column Grid Layout (Matching Reference Structure) */}
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] lg:items-start">
+          {/* 2-Column Grid Layout (Clean Sesuai Referensi rcsdigitalmandiri.id) */}
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
             {/* ========================================================
-                KOLOM KIRI: GALERI, EXCERPT, ARTIKEL STUDI KASUS, & HASHTAGS
+                KOLOM KIRI: PREVIEW SS-AN CUPLIKAN, EXCERPT, STUDI KASUS
                 ======================================================== */}
-            <div className="min-w-0 space-y-8">
-              {/* Wadah Galeri / Carousel Cuplikan Halaman */}
-              <div className="space-y-4">
-                {/* Box Penjelasan Cuplikan Slide Aktif */}
-                {currentSlideInfo && (
-                  <div className="rounded-2xl border border-blue-200/90 bg-gradient-to-r from-blue-50/90 via-sky-50/60 to-white p-4 sm:p-5 shadow-xs transition-all">
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#007DFE] bg-white px-3 py-1 rounded-full border border-blue-200 shadow-xs">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        {currentSlideInfo.badge}
-                      </span>
-                      <span className="text-xs font-medium text-slate-500">
-                        {activeImageIndex + 1} dari {galleryImages.length} Halaman
-                      </span>
+            <div className="min-w-0 space-y-6 sm:space-y-8">
+              {/* Wadah Cuplikan Halaman (Clean SS-an Image Viewer) */}
+              <div className="space-y-3">
+                {/* Main Preview Container Clean Berisi Cuplikan Halaman (SS-an) */}
+                <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100 shadow-sm group">
+                  <div
+                    onClick={() => setIsZoomOpen(true)}
+                    className="relative block aspect-[16/10] w-full cursor-zoom-in overflow-hidden bg-slate-100"
+                  >
+                    <Image
+                      src={currentImage}
+                      alt={currentSlideInfo ? currentSlideInfo.title : `${item.title} cuplikan ${activeImageIndex + 1}`}
+                      fill
+                      priority
+                      quality={95}
+                      sizes="(max-width: 1024px) 100vw, 800px"
+                      className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.01]"
+                    />
+
+                    {/* Tombol Zoom Layar Penuh (Muncul saat Hover) */}
+                    <div className="absolute top-3.5 right-3.5 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/80 hover:bg-slate-900 text-white p-2.5 rounded-xl backdrop-blur-md shadow-md cursor-pointer">
+                      <Maximize2 className="w-4 h-4" />
                     </div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
-                      {currentSlideInfo.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                      {currentSlideInfo.description}
-                    </p>
                   </div>
-                )}
 
-                {/* Simulasi Mockup Interaktif (Desktop 1440px dengan Scroll Horizontal & Mobile App 390px) */}
-                <div className="p-4 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-xl space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-rose-500 inline-block" />
-                      <span className="w-3 h-3 rounded-full bg-amber-500 inline-block" />
-                      <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
-                      <span className="text-xs text-slate-300 font-mono pl-2">
-                        {previewMode === "desktop" ? "🖥️ Mode Desktop (1440px Grid)" : "📱 Mode App / Mobile (390px)"}
-                      </span>
-                    </div>
-
-                    {/* Dropdown Toggle Pilihan Mode Desktop atau App */}
-                    <div className="flex items-center gap-2">
-                      <label htmlFor="device-mode-dropdown" className="text-xs text-slate-400 font-medium hidden sm:inline">
-                        Mode Tampilan:
-                      </label>
-                      <select
-                        id="device-mode-dropdown"
-                        value={previewMode}
-                        onChange={(e) => setPreviewMode(e.target.value as "desktop" | "app")}
-                        className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold py-2 px-3.5 rounded-xl border border-slate-700 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-[#007DFE]"
+                  {/* Navigasi Panah Geser Slide Kiri / Kanan */}
+                  {galleryImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex((prev) =>
+                            prev > 0 ? prev - 1 : galleryImages.length - 1
+                          );
+                        }}
+                        aria-label="Cuplikan sebelumnya"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-slate-800 flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                       >
-                        <option value="desktop">🖥️ Mode Desktop (Scroll Horizontal)</option>
-                        <option value="app">📱 Mode App / Mobile</option>
-                      </select>
-                    </div>
-                  </div>
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex((prev) =>
+                            prev < galleryImages.length - 1 ? prev + 1 : 0
+                          );
+                        }}
+                        aria-label="Cuplikan selanjutnya"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-slate-800 flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
 
-                  {/* Kotak Card Detail dengan Scroll Horizontal & Vertikal */}
-                  <div className="relative overflow-x-auto overflow-y-auto max-h-[580px] p-3 bg-slate-950 rounded-xl border border-slate-800 scrollbar-thin scrollbar-thumb-slate-700">
-                    {previewMode === "desktop" ? (
-                      <div className="min-w-[1240px] w-[1380px] bg-white rounded-lg overflow-hidden shadow-2xl mx-auto">
-                        <img
-                          src={currentImage}
-                          alt={currentSlideInfo ? currentSlideInfo.title : "Desktop preview"}
-                          className="w-full h-auto block"
-                          loading="eager"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-[360px] mx-auto bg-slate-800 p-2.5 rounded-[44px] shadow-2xl border-4 border-slate-700">
-                        <div className="w-full h-[560px] bg-white rounded-[34px] overflow-y-auto overflow-x-hidden scrollbar-none">
-                          <img
-                            src={currentImage}
-                            alt={currentSlideInfo ? currentSlideInfo.title : "Mobile app preview"}
-                            className="w-full h-auto block object-cover object-top"
-                            loading="eager"
-                          />
-                        </div>
-                      </div>
+                  {/* Badge Indikator Nomor Slide Sesuai Referensi (Contoh: 1/8) */}
+                  <div className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-slate-900/85 backdrop-blur-md px-3 py-1 text-xs font-semibold text-white shadow-sm flex items-center gap-1.5">
+                    <span>
+                      {activeImageIndex + 1}/{galleryImages.length}
+                    </span>
+                    {currentSlideInfo && (
+                      <span className="hidden sm:inline border-l border-white/30 pl-1.5 text-[11px] text-slate-200 truncate max-w-[220px]">
+                        {currentSlideInfo.title.replace(/\(.*\)/, "").trim()}
+                      </span>
                     )}
                   </div>
 
-                  {/* Keterangan & Navigasi Cepat di Bawah Kotak Preview */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 pt-1">
-                    <span>
-                      💡 {previewMode === "desktop" ? "Geser ke samping (scroll horizontal) di dalam kotak untuk melihat seluruh bidang halaman." : "Scroll ke bawah di dalam bingkai ponsel untuk memeriksa tata letak mobile."}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setIsZoomOpen(true)}
-                      className="text-[#007DFE] hover:text-blue-400 font-semibold underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <Maximize2 className="w-3.5 h-3.5" />
-                      Perbesar Layar Penuh (Zoom)
-                    </button>
-                  </div>
+                  {/* Icon WhatsApp Kecil di Pojok Kanan Bawah Sesuai Referensi Gambar */}
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-md transition-transform hover:scale-110 cursor-pointer"
+                    title="Konsultasi cepat via WhatsApp"
+                  >
+                    <MessageSquare className="w-4 h-4 fill-white" />
+                  </a>
                 </div>
 
-                {/* Strip Thumbnail Cuplikan Halaman Website di Bawahnya */}
+                {/* Strip Thumbnail Cuplikan Halaman (Clean SS-an Strip) */}
                 {galleryImages.length > 1 && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                      <span>Daftar Cuplikan Halaman ({galleryImages.length} Halaman):</span>
-                      <span className="text-[#007DFE] font-semibold">Klik untuk mengganti cuplikan slide</span>
-                    </div>
-                    <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300">
-                      {galleryImages.map((img, idx) => {
-                        const slideInfo = isCompanyProfile ? companyProfileSlides[idx] : null;
-                        return (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => setActiveImageIndex(idx)}
-                            aria-label={`Slide ${idx + 1}`}
-                            className={`relative shrink-0 overflow-hidden rounded-xl border bg-slate-100 transition-all cursor-pointer w-24 sm:w-28 text-left group ${
-                              activeImageIndex === idx
-                                ? "border-[#007DFE] ring-2 ring-blue-500/30 scale-[1.03] shadow-md"
-                                : "border-slate-200/90 hover:border-slate-400 opacity-80 hover:opacity-100"
-                            }`}
-                          >
-                            <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-900">
-                              <Image
-                                src={img}
-                                alt={`Thumbnail ${idx + 1}`}
-                                fill
-                                sizes="120px"
-                                className="object-cover object-top"
-                              />
-                              <span className="absolute bottom-1 right-1 z-[1] rounded bg-slate-900/85 px-1.5 py-0.5 text-[9px] font-bold text-white">
-                                {idx + 1}
-                              </span>
-                            </div>
-                            <div className="p-1.5 bg-white">
-                              <p className="text-[10px] font-bold text-slate-900 truncate">
-                                {slideInfo ? slideInfo.badge.replace(/^Slide \d+ • /, "") : `Tampilan ${idx + 1}`}
-                              </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="flex gap-2.5 overflow-x-auto pb-1.5 pt-1 scrollbar-thin scrollbar-thumb-slate-300">
+                    {galleryImages.map((img, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveImageIndex(idx)}
+                        aria-label={`Cuplikan ${idx + 1}`}
+                        className={`relative shrink-0 overflow-hidden rounded-xl border bg-slate-100 transition-all cursor-pointer w-20 sm:w-24 aspect-[16/10] ${
+                          activeImageIndex === idx
+                            ? "border-[#007DFE] ring-2 ring-[#007DFE]/30 scale-[1.02] shadow-sm"
+                            : "border-slate-200/90 hover:border-slate-400 opacity-75 hover:opacity-100"
+                        }`}
+                      >
+                        <Image
+                          src={img}
+                          alt={`${item.title} thumb ${idx + 1}`}
+                          fill
+                          sizes="96px"
+                          className="object-cover object-top"
+                        />
+                        <span className="absolute bottom-1 right-1 z-[1] rounded bg-slate-900/85 px-1.5 py-0.5 text-[9px] font-bold text-white">
+                          {idx + 1}
+                        </span>
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
 
-              {/* Teks Excerpt / Lead Studi Kasus */}
-              <p className="text-sm sm:text-base italic leading-relaxed text-slate-600 border-l-3 border-[#007DFE] pl-4 bg-slate-50/60 py-3 rounded-r-xl">
+              {/* Teks Excerpt / Ringkasan Proyek */}
+              <p className="text-sm sm:text-base leading-relaxed text-slate-600 border-l-2 border-[#007DFE] pl-4 py-1">
                 {item.excerpt || item.description}
               </p>
 
-              {/* Artikel Detail Studi Kasus (Struktur Sesuai Referensi) */}
-              <article className="prose prose-slate max-w-none space-y-8">
+              {/* Konten Studi Kasus (Struktur Sesuai Referensi rcsdigitalmandiri.id) */}
+              <article className="prose prose-slate max-w-none space-y-8 pt-2">
                 {/* 1. Tentang Proyek */}
                 <section className="space-y-3">
                   <h2 className="text-lg sm:text-xl font-bold text-slate-900 font-poppins flex items-center gap-2 border-b border-slate-100 pb-2">
@@ -424,115 +390,78 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
             </div>
 
             {/* ========================================================
-                KOLOM KANAN: SIDEBAR INFORMASI PROYEK (STICKY ON DESKTOP)
+                KOLOM KANAN: SIDEBAR INFORMASI PROYEK (CLEAN SESUAI REFERENSI)
                 ======================================================== */}
             <aside className="lg:sticky lg:top-28 space-y-6">
-              <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-6">
+              <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-5">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 font-poppins">
                     Informasi proyek
                   </h2>
-                  <div className="h-0.5 w-10 bg-[#007DFE] mt-1.5 rounded-full" />
                 </div>
 
-                {/* Definition List Metadata Proyek */}
-                <dl className="divide-y divide-slate-100 text-sm space-y-0">
+                {/* Metadata List */}
+                <div className="space-y-4 text-sm">
                   {/* Klien */}
-                  <div className="py-3 flex justify-between gap-4">
-                    <dt className="text-slate-500 shrink-0 font-medium">Klien</dt>
-                    <dd className="font-semibold text-slate-900 text-right truncate">
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Klien</span>
+                    <span className="font-semibold text-slate-900 mt-0.5 block truncate">
                       {item.client || item.title}
-                    </dd>
+                    </span>
                   </div>
 
                   {/* Durasi Pengerjaan */}
-                  <div className="py-3 flex justify-between gap-4">
-                    <dt className="text-slate-500 shrink-0 font-medium flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      Durasi
-                    </dt>
-                    <dd className="font-semibold text-slate-900 text-right">
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Durasi</span>
+                    <span className="font-semibold text-slate-900 mt-0.5 block">
                       {item.duration || "2 Minggu"}
-                    </dd>
+                    </span>
                   </div>
 
                   {/* Kategori */}
-                  <div className="py-3 flex justify-between gap-4">
-                    <dt className="text-slate-500 shrink-0 font-medium flex items-center gap-1.5">
-                      <Layers className="w-3.5 h-3.5 text-slate-400" />
-                      Kategori
-                    </dt>
-                    <dd className="font-semibold text-slate-900 text-right">
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Kategori</span>
+                    <span className="font-semibold text-slate-900 mt-0.5 block">
                       {item.category || "Website"}
-                    </dd>
+                    </span>
                   </div>
 
                   {/* Tahun */}
-                  <div className="py-3 flex justify-between gap-4">
-                    <dt className="text-slate-500 shrink-0 font-medium flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                      Tahun
-                    </dt>
-                    <dd className="font-semibold text-slate-900 text-right">
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Tahun</span>
+                    <span className="font-semibold text-slate-900 mt-0.5 block">
                       {item.year || "2026"}
-                    </dd>
+                    </span>
                   </div>
 
-                  {/* Pencapaian / Hasil Utama */}
-                  {item.metrics && (
-                    <div className="py-3 space-y-1">
-                      <dt className="text-slate-500 font-medium flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                        Hasil Utama
-                      </dt>
-                      <dd className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 rounded-lg p-2.5 leading-snug">
-                        {item.metrics}
-                      </dd>
-                    </div>
-                  )}
-
-                  {/* Teknologi yang Digunakan */}
+                  {/* Stack (Pills Sesuai Referensi) */}
                   {item.techStack && item.techStack.length > 0 && (
-                    <div className="py-3 space-y-2">
-                      <dt className="text-slate-500 font-medium">Teknologi</dt>
-                      <dd className="flex flex-wrap gap-1.5">
+                    <div className="pt-2">
+                      <span className="block text-xs text-slate-500 font-medium mb-2">Stack</span>
+                      <div className="flex flex-wrap gap-1.5">
                         {item.techStack.map((tech, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center rounded-md bg-blue-50/80 px-2 py-0.5 text-xs font-medium text-[#007DFE] border border-blue-200/60"
+                            className="inline-flex items-center rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#007DFE] border border-blue-100"
                           >
                             {tech}
                           </span>
                         ))}
-                      </dd>
+                      </div>
                     </div>
                   )}
-                </dl>
+                </div>
 
-                {/* Tombol Aksi CTA */}
-                <div className="pt-2 space-y-3">
-                  {/* Tombol Lihat Hasil Website Jika URL Tersedia */}
-                  {item.liveUrl && (
-                    <a
-                      href={item.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors"
-                    >
-                      <span>Lihat hasil website</span>
-                      <ArrowUpRight className="w-4 h-4" />
-                    </a>
-                  )}
-
-                  {/* Tombol WhatsApp Konsultasi Proyek Serupa */}
+                {/* Tombol CTA Bersih Sesuai Referensi */}
+                <div className="pt-3">
                   <a
-                    href={whatsappUrl}
+                    href={item.liveUrl || whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#007DFE] px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 transition-all cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#007DFE] hover:bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all cursor-pointer"
                   >
-                    <MessageSquare className="w-4 h-4 fill-white" />
-                    <span>Konsultasi Proyek Serupa</span>
+                    <span>{item.liveUrl ? "Lihat hasil" : "Konsultasi Proyek"}</span>
+                    <ArrowUpRight className="w-4 h-4" />
                   </a>
                 </div>
               </div>
@@ -546,7 +475,7 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
             <section className="mt-20 pt-12 border-t border-slate-200/90">
               <div className="mb-8 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 font-poppins">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 font-poppins">
                     Proyek terkait
                   </h2>
                   <p className="text-sm text-slate-500 mt-1">
