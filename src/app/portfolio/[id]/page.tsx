@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CompanyProfileShowcaseView } from "@/components/portfolio/CompanyProfileShowcaseView";
+import { portfolioData } from "@/data/portfolio";
+import { PortfolioDetailView } from "@/components/portfolio/PortfolioDetailView";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -7,24 +8,49 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
+  const decodedId = decodeURIComponent(id);
+  const item =
+    portfolioData.find(
+      (p) =>
+        p.id === decodedId ||
+        p.slug === decodedId ||
+        p.id.toLowerCase() === decodedId.toLowerCase() ||
+        (p.slug && p.slug.toLowerCase() === decodedId.toLowerCase())
+    ) || portfolioData[0];
+
   return {
-    title: `Showcase Portofolio ${id} - DickyWeb`,
-    description: `Detail arsitektur halaman portofolio ${id} di DickyWeb.`,
+    title: `${item.title} | Portofolio DickyWeb`,
+    description:
+      item.excerpt ||
+      `Studi kasus pembuatan ${item.title} oleh DickyWeb: SEO-friendly, responsif, dan performa tinggi.`,
+    openGraph: {
+      title: `${item.title} | Portofolio DickyWeb`,
+      description: item.excerpt || item.description,
+      images: [
+        {
+          url: item.image,
+          alt: item.title,
+        },
+      ],
+    },
   };
 }
 
 export default async function PortfolioDynamicPage({ params }: PageProps) {
   const { id } = await params;
-  // Jika akses aurora-law, company-profile, atau profil perusahaan
-  if (
-    id === "company-profile" ||
-    id === "aurora-law" ||
-    id.includes("company") ||
-    id.includes("profile")
-  ) {
-    return <CompanyProfileShowcaseView />;
-  }
+  const decodedId = decodeURIComponent(id);
 
-  // Fallback ke Company Profile Showcase untuk menampilkan halaman multi-slide
-  return <CompanyProfileShowcaseView />;
+  // Cari item berdasarkan id atau slug
+  const matchedItem =
+    portfolioData.find(
+      (p) =>
+        p.id === decodedId ||
+        p.slug === decodedId ||
+        p.id.toLowerCase() === decodedId.toLowerCase() ||
+        (p.slug && p.slug.toLowerCase() === decodedId.toLowerCase()) ||
+        decodedId.includes(p.id) ||
+        (p.slug && decodedId.includes(p.slug))
+    ) || portfolioData[0];
+
+  return <PortfolioDetailView item={matchedItem} />;
 }

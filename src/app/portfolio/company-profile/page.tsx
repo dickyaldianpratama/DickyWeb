@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import { CompanyProfileShowcaseView } from "@/components/portfolio/CompanyProfileShowcaseView";
+import { portfolioData } from "@/data/portfolio";
+import { PortfolioDetailView } from "@/components/portfolio/PortfolioDetailView";
+
+const companyProfileItem =
+  portfolioData.find((p) => p.id === "company-profile") || portfolioData[1] || portfolioData[0];
 
 export const metadata: Metadata = {
-  title: "Showcase Detail Website Company Profile Modern Enterprise - DickyWeb",
+  title: `${companyProfileItem.title} | Portofolio DickyWeb`,
   description:
-    "Eksplorasi interaktif arsitektur website profil perusahaan berkelas korporat modern dari DickyWeb. Dilengkapi slide berbagai halaman (Home, About, Services, News, Article Detail, Contact, Consultation) dengan mode Desktop & App.",
+    companyProfileItem.excerpt ||
+    "Studi kasus website profil perusahaan modern enterprise oleh DickyWeb.",
   openGraph: {
-    title: "Showcase Detail Website Company Profile - DickyWeb",
-    description:
-      "Showcase interaktif halaman-halaman website profil perusahaan dengan mode preview Desktop & Mobile App.",
+    title: `${companyProfileItem.title} | Portofolio DickyWeb`,
+    description: companyProfileItem.excerpt || companyProfileItem.description,
     images: [
       {
-        url: "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_home_page/screen.png",
-        width: 1200,
-        height: 630,
-        alt: "Website Company Profile Showcase",
+        url: companyProfileItem.image,
+        alt: companyProfileItem.title,
       },
     ],
   },
 };
 
 export default function CompanyProfileDetailPage() {
-  return <CompanyProfileShowcaseView />;
+  return <PortfolioDetailView item={companyProfileItem} />;
 }

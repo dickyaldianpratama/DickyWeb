@@ -149,7 +149,8 @@ export function saveActivePromo(data: BrochurePromoData): boolean {
 
 /**
  * Membersihkan dan memastikan konsistensi data portofolio dari LocalStorage / Cloud
- * Mencegah URL mati lama (ruangruma, rcsdigitalmandiri) dan memastikan Company Profile mengarah ke showcase internal.
+ * Menjaga tampilan judul & gambar yang diinput admin tetap 100% utuh tanpa ditimpa paksa,
+ * serta melengkapi data pendukung studi kasus (galeri, durasi, tahun, tantangan, solusi).
  */
 export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
   return list.map((item: PortfolioItem) => {
@@ -159,61 +160,64 @@ export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
     if (
       updatedItem.liveUrl &&
       (updatedItem.liveUrl.includes("rcsdigitalmandiri.id") ||
-        updatedItem.liveUrl.includes("ruangruma.vercel.app") ||
-        updatedItem.liveUrl.includes("ruangruma"))
+        updatedItem.liveUrl.includes("ruangruma.vercel.app"))
     ) {
       updatedItem.liveUrl = "";
     }
 
-    // 2. Hubungkan Company Profile ke halaman showcase internal
-    const isCompanyProfile =
-      updatedItem.id === "company-profile" ||
-      updatedItem.id === "aurora-law" ||
-      updatedItem.category?.toLowerCase() === "company profile" ||
-      updatedItem.title?.toLowerCase().includes("company profile");
+    // 2. Tentukan slug / detail URL untuk halaman studi kasus
+    const matchingDefault = portfolioData.find(
+      (d) =>
+        d.id === updatedItem.id ||
+        (updatedItem.id === "aurora-law" && d.id === "company-profile") ||
+        (d.slug && updatedItem.slug === d.slug)
+    );
 
-    if (isCompanyProfile) {
-      // Jika URL kosong, menunjuk ke ruangruma, atau URL relatif, arahkan ke showcase detail
-      if (
-        !updatedItem.liveUrl ||
-        updatedItem.liveUrl === "" ||
-        updatedItem.liveUrl.includes("ruangruma") ||
-        updatedItem.liveUrl.includes("vercel.app") ||
-        updatedItem.liveUrl.startsWith("/")
-      ) {
-        updatedItem.liveUrl = "/portfolio/company-profile";
+    if (matchingDefault) {
+      // Lengkapi data studi kasus jika belum ada, tanpa menimpa inputan judul/kategori admin
+      if (!updatedItem.slug) {
+        updatedItem.slug = matchingDefault.slug;
       }
-      updatedItem.detailUrl = "/portfolio/company-profile";
+      if (!updatedItem.gallery || updatedItem.gallery.length === 0) {
+        updatedItem.gallery = matchingDefault.gallery;
+      }
+      if (!updatedItem.duration) {
+        updatedItem.duration = matchingDefault.duration;
+      }
+      if (!updatedItem.year) {
+        updatedItem.year = matchingDefault.year;
+      }
+      if (!updatedItem.challenge) {
+        updatedItem.challenge = matchingDefault.challenge;
+      }
+      if (!updatedItem.solutions || updatedItem.solutions.length === 0) {
+        updatedItem.solutions = matchingDefault.solutions;
+      }
+      if (!updatedItem.results) {
+        updatedItem.results = matchingDefault.results;
+      }
+      if (!updatedItem.aboutProject) {
+        updatedItem.aboutProject = matchingDefault.aboutProject;
+      }
+      if (!updatedItem.excerpt) {
+        updatedItem.excerpt = matchingDefault.excerpt;
+      }
+      if (!updatedItem.image || updatedItem.image.includes("images.unsplash.com")) {
+        updatedItem.image = matchingDefault.image;
+      }
     }
 
-    // 3. Fallback Coffee Shop
+    // 3. Pastikan detailUrl mengarah ke halaman studi kasus produk/proyek tersebut
+    updatedItem.detailUrl = `/portfolio/${updatedItem.slug || updatedItem.id}`;
+
+    // 4. Fallback Coffee Shop jika belum ada liveUrl
     if (
       (updatedItem.id === "kopi-senja" ||
         updatedItem.title.toLowerCase().includes("coffee") ||
         updatedItem.title.toLowerCase().includes("kopi")) &&
       !updatedItem.liveUrl
     ) {
-      updatedItem.title = updatedItem.title.includes("Senja")
-        ? "Website Toko Online Coffee Kenangan"
-        : updatedItem.title;
       updatedItem.liveUrl = "https://kopikenangan.com";
-    }
-
-    // 4. Sinkronisasi gambar default jika kosong atau link placeholder
-    const matchingDefault = portfolioData.find(
-      (d) =>
-        d.id === updatedItem.id ||
-        (updatedItem.id === "aurora-law" && d.id === "company-profile")
-    );
-    if (
-      matchingDefault &&
-      (!updatedItem.image ||
-        updatedItem.image.includes("images.unsplash.com") ||
-        updatedItem.image.includes("aurora-law.jpg"))
-    ) {
-      updatedItem.image = matchingDefault.image;
-      updatedItem.title = matchingDefault.title;
-      updatedItem.liveUrl = matchingDefault.liveUrl;
     }
 
     return updatedItem;

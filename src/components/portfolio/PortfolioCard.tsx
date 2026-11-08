@@ -67,34 +67,10 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
     mouseY.set(0);
   };
 
-  // Identifikasi link tujuan direct URL
-  const isCoffeeItem =
-    item.id === "kopi-senja" ||
-    item.title.toLowerCase().includes("coffee") ||
-    item.title.toLowerCase().includes("coffe") ||
-    item.title.toLowerCase().includes("kopi");
-
-  const isCompanyProfile =
-    item.id === "company-profile" ||
-    item.id === "aurora-law" ||
-    item.category?.toLowerCase() === "company profile" ||
-    item.title.toLowerCase().includes("company profile");
-
-  const rawUrl = item.liveUrl || item.detailUrl || "";
-  const isDeadOrLegacyUrl =
-    rawUrl.includes("ruangruma") ||
-    rawUrl.includes("rcsdigitalmandiri.id");
-
-  // Jika kartu ini adalah Company Profile ATAU URL tujuannya mengarah ke ruangruma/domain lama yang mati,
-  // SELALU arahkan langsung ke halaman showcase interaktif: /portfolio/company-profile
-  let detailUrl = "";
-  if (isCompanyProfile || isDeadOrLegacyUrl) {
-    detailUrl = "/portfolio/company-profile";
-  } else if (rawUrl) {
-    detailUrl = rawUrl;
-  } else if (isCoffeeItem) {
-    detailUrl = "https://kopikenangan.com";
-  }
+  // Tautan ke halaman detail produk/proyek (Struktur studi kasus sesuai referensi)
+  const detailUrl = item.slug
+    ? `/portfolio/${item.slug}`
+    : `/portfolio/${item.id}`;
 
   // Pengaturan tampilan gambar yang dikontrol admin (Fit & Position)
   const imageFit = item.imageFit || "cover";
@@ -108,24 +84,12 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
       : "object-top";
 
   const handleCardClick = () => {
-    if (detailUrl) {
-      if (detailUrl.startsWith("/")) {
-        router.push(detailUrl);
-      } else {
-        window.open(detailUrl, "_blank", "noopener,noreferrer");
-      }
-    }
+    router.push(detailUrl);
   };
 
   const handleButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (detailUrl) {
-      if (detailUrl.startsWith("/")) {
-        router.push(detailUrl);
-      } else {
-        window.open(detailUrl, "_blank", "noopener,noreferrer");
-      }
-    }
+    router.push(detailUrl);
   };
 
   return (

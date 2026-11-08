@@ -153,16 +153,17 @@ export const PortfolioManager: React.FC = () => {
     setIsSaving(true);
     try {
       const payload: PortfolioItem = {
+        ...(editingItem || {}),
         id: editingItem ? editingItem.id : `proyek-${Date.now()}`,
         title: formData.title.trim(),
         category: formData.category.trim() || "WEBSITE",
         image: formData.image.trim(),
         imageFit: formData.imageFit,
         imagePosition: formData.imagePosition,
-        client: editingItem ? editingItem.client : formData.title.trim(),
-        description: editingItem ? editingItem.description : "",
-        techStack: editingItem ? editingItem.techStack : ["Website"],
-        metrics: editingItem ? editingItem.metrics : "",
+        client: editingItem?.client || formData.title.trim(),
+        description: editingItem?.description || "",
+        techStack: editingItem?.techStack || ["Website"],
+        metrics: editingItem?.metrics || "",
         liveUrl: formData.liveUrl.trim(),
       };
 
