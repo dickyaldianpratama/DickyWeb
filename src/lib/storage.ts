@@ -80,7 +80,7 @@ export async function getActivePromoFromCloud(): Promise<BrochurePromoData> {
 export async function saveActivePromoAsync(data: BrochurePromoData): Promise<boolean> {
   if (typeof window === "undefined") return false;
 
-  let finalData = { ...data };
+  const finalData = { ...data };
 
   // 1. Jika flyer promo berupa base64, unggah ke Supabase bucket dickyweb-media/brochures
   if (finalData.brochureImageUrl && finalData.brochureImageUrl.startsWith("data:")) {
@@ -173,7 +173,7 @@ export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
   }
 
   return dedupedList.map((item: PortfolioItem) => {
-    let updatedItem = { ...item };
+    const updatedItem = { ...item };
 
     // 1. Bersihkan link mati atau domain dummy lama
     if (
@@ -292,7 +292,7 @@ export async function savePortfolioListAsync(items: PortfolioItem[]): Promise<bo
 
   // 1. Loop dan upload gambar baru yang masih berupa base64 ke Supabase Storage
   for (const item of items) {
-    let finalItem = { ...item };
+    const finalItem = { ...item };
     if (finalItem.image && finalItem.image.startsWith("data:")) {
       try {
         const publicUrl = await uploadMediaToCloud(
@@ -707,7 +707,7 @@ export async function saveHeroCollageAsync(slots: HeroCollageSlot[]): Promise<bo
   // 1. Loop dan upload gambar baru yang masih berupa data: URL ke Supabase Storage
   const updatedSlots: HeroCollageSlot[] = [];
   for (const slot of slots) {
-    let finalSlot = { ...slot };
+    const finalSlot = { ...slot };
     if (finalSlot.imageUrl && finalSlot.imageUrl.startsWith("data:")) {
       try {
         const publicUrl = await uploadMediaToCloud(

@@ -25,7 +25,9 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({ item }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
-    setIsImageLoaded(false);
+    queueMicrotask(() => {
+      setIsImageLoaded(false);
+    });
   }, [item.image]);
 
   // Posisi mouse ternormalisasi (-0.5 hingga 0.5)

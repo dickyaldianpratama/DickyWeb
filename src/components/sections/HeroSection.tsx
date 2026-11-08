@@ -56,7 +56,9 @@ const HeroCollageSlotItem: React.FC<HeroCollageSlotItemProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setIsLoaded(false);
+    queueMicrotask(() => {
+      setIsLoaded(false);
+    });
   }, [slot?.imageUrl]);
 
   const isContain = slot?.imageFit === "contain";

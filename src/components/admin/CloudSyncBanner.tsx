@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  ArrowRight,
   Database,
 } from "lucide-react";
 
@@ -69,7 +68,9 @@ export const CloudSyncBanner: React.FC = () => {
   };
 
   useEffect(() => {
-    checkStatus();
+    queueMicrotask(() => {
+      checkStatus();
+    });
   }, []);
 
   const handleManualSync = async () => {

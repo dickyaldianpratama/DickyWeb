@@ -28,7 +28,9 @@ export const Modal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setIsImageLoaded(false);
+      queueMicrotask(() => {
+        setIsImageLoaded(false);
+      });
     }
   }, [isOpen, imageUrl]);
 

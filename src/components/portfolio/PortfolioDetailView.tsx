@@ -20,10 +20,6 @@ import {
   Maximize2,
   X,
   CheckCircle2,
-  Calendar,
-  Clock,
-  Layers,
-  Sparkles,
   ArrowUpRight,
 } from "lucide-react";
 
@@ -49,16 +45,18 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({
 
   // Ambil data terbaru dari cloud / storage agar sinkron dengan perubahan admin
   useEffect(() => {
-    const local = getPortfolioList();
-    if (local && local.length > 0) {
-      setAllItems(local);
-      const found = local.find(
-        (p) => p.id === initialItem.id || p.slug === initialItem.slug || p.slug === initialItem.id
-      );
-      if (found) {
-        setItem(found);
+    queueMicrotask(() => {
+      const local = getPortfolioList();
+      if (local && local.length > 0) {
+        setAllItems(local);
+        const found = local.find(
+          (p) => p.id === initialItem.id || p.slug === initialItem.slug || p.slug === initialItem.id
+        );
+        if (found) {
+          setItem(found);
+        }
       }
-    }
+    });
 
     getPortfolioListFromCloud().then((cloudItems) => {
       if (cloudItems && cloudItems.length > 0) {
