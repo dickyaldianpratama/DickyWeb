@@ -113,10 +113,7 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({ item: 
   const whatsappMessage = `Halo DickyWeb, saya baru saja melihat studi kasus portofolio *${item.title}* di website DickyWeb. Saya tertarik berkonsultasi untuk pembuatan website serupa untuk bisnis saya.`;
   const whatsappUrl = createWhatsAppLink(whatsappMessage);
 
-  const isCompanyProfileShowcase =
-    item.id === "company-profile" ||
-    item.slug === "website-company-profile-modern-enterprise" ||
-    item.category?.toLowerCase() === "company profile";
+  const showDeviceMockupOption = true;
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col selection:bg-[#007DFE] selection:text-white font-inter">
@@ -280,8 +277,8 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({ item: 
                 )}
               </div>
 
-              {/* Fitur Khusus: Toggle Mode Mockup Interaktif (Khusus Company Profile / Multi-View) */}
-              {isCompanyProfileShowcase && (
+              {/* Fitur Interaktif: Toggle Mode Mockup Interaktif (Desktop & App) */}
+              {showDeviceMockupOption && (
                 <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <span className="text-xs font-bold text-[#007DFE] uppercase tracking-wider flex items-center gap-1.5">
@@ -304,7 +301,7 @@ export const PortfolioDetailView: React.FC<PortfolioDetailViewProps> = ({ item: 
               )}
 
               {/* Tampilan Mockup Interaktif yang Bisa di-Scroll Horizontal */}
-              {isCompanyProfileShowcase && showInteractiveMockup && (
+              {showDeviceMockupOption && showInteractiveMockup && (
                 <div className="p-4 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-xl space-y-4">
                   <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-3">
                     <div className="flex items-center gap-2">

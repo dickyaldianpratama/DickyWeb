@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { portfolioData } from "@/data/portfolio";
 import { PortfolioDetailView } from "@/components/portfolio/PortfolioDetailView";
 
@@ -9,6 +10,18 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const decodedId = decodeURIComponent(id);
+
+  if (
+    decodedId === "company-profile" ||
+    decodedId === "website-company-profile-modern-enterprise"
+  ) {
+    const item = portfolioData[0];
+    return {
+      title: `${item.title} | Portofolio DickyWeb`,
+      description: item.excerpt,
+    };
+  }
+
   const item =
     portfolioData.find(
       (p) =>
@@ -39,6 +52,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PortfolioDynamicPage({ params }: PageProps) {
   const { id } = await params;
   const decodedId = decodeURIComponent(id);
+
+  if (
+    decodedId === "company-profile" ||
+    decodedId === "website-company-profile-modern-enterprise"
+  ) {
+    redirect("/portfolio/website-kitchen-set-interior-custom-ruangruma");
+  }
 
   // Cari item berdasarkan id atau slug
   const matchedItem =

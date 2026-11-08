@@ -153,7 +153,21 @@ export function saveActivePromo(data: BrochurePromoData): boolean {
  * serta melengkapi data pendukung studi kasus (galeri, durasi, tahun, tantangan, solusi).
  */
 export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
-  return list.map((item: PortfolioItem) => {
+  return list
+    .filter((item: PortfolioItem) => {
+      // Hapus kartu dummy company profile modern enterprise / YourCompany
+      if (
+        item.id === "company-profile" ||
+        item.slug === "website-company-profile-modern-enterprise" ||
+        (item.title && item.title.toLowerCase().includes("modern enterprise")) ||
+        (item.title && item.title.toLowerCase().includes("company profile modern")) ||
+        (item.client && item.client.toLowerCase().includes("yourcompany"))
+      ) {
+        return false;
+      }
+      return true;
+    })
+    .map((item: PortfolioItem) => {
     let updatedItem = { ...item };
 
     // 1. Bersihkan link mati atau domain dummy lama
@@ -169,8 +183,8 @@ export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
     const matchingDefault = portfolioData.find(
       (d) =>
         d.id === updatedItem.id ||
-        (updatedItem.id === "aurora-law" && d.id === "company-profile") ||
-        (d.slug && updatedItem.slug === d.slug)
+        (d.slug && updatedItem.slug === d.slug) ||
+        (d.title && updatedItem.title && d.title.toLowerCase() === updatedItem.title.toLowerCase())
     );
 
     if (matchingDefault) {
@@ -209,16 +223,6 @@ export function sanitizePortfolioItems(list: PortfolioItem[]): PortfolioItem[] {
 
     // 3. Pastikan detailUrl mengarah ke halaman studi kasus produk/proyek tersebut
     updatedItem.detailUrl = `/portfolio/${updatedItem.slug || updatedItem.id}`;
-
-    // 4. Fallback Coffee Shop jika belum ada liveUrl
-    if (
-      (updatedItem.id === "kopi-senja" ||
-        updatedItem.title.toLowerCase().includes("coffee") ||
-        updatedItem.title.toLowerCase().includes("kopi")) &&
-      !updatedItem.liveUrl
-    ) {
-      updatedItem.liveUrl = "https://kopikenangan.com";
-    }
 
     return updatedItem;
   });
@@ -407,13 +411,11 @@ export async function updatePortfolioItemAsync(updatedItem: PortfolioItem): Prom
     // 1. Cari berdasarkan ID yang sama persis
     let index = current.findIndex((p) => p.id === updatedItem.id);
 
-    // 2. Jika tidak ditemukan berdasarkan ID (misal sinkronisasi ID berubah), cari kemiripan judul atau alias
+    // 2. Jika tidak ditemukan berdasarkan ID (misal sinkronisasi ID berubah), cari kemiripan judul
     if (index === -1) {
       index = current.findIndex(
         (p) =>
-          (p.title && p.title.trim().toLowerCase() === updatedItem.title.trim().toLowerCase()) ||
-          (updatedItem.id === "kitchen-set-ruangruma" && p.id === "company-profile") ||
-          (updatedItem.id === "company-profile" && p.id === "kitchen-set-ruangruma")
+          p.title && p.title.trim().toLowerCase() === updatedItem.title.trim().toLowerCase()
       );
     }
 

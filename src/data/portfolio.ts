@@ -6,7 +6,7 @@ export const portfolioData: PortfolioItem[] = [
     slug: "website-kitchen-set-interior-custom-ruangruma",
     title: "Website Kitchen Set & Interior RuangRuma",
     client: "Pak Nurman (RuangRuma)",
-    category: "Website",
+    category: "WEBSITE",
     duration: "1 Minggu",
     year: "2026",
     excerpt:
@@ -43,159 +43,199 @@ export const portfolioData: PortfolioItem[] = [
       "/images/portfolio/ruangruma/ruangruma-8.webp",
       "/images/portfolio/ruangruma/ruangruma-9.webp",
     ],
-    liveUrl: "https://ruangruma.com",
+    liveUrl: "",
     detailUrl: "/portfolio/website-kitchen-set-interior-custom-ruangruma",
     imageFit: "cover",
     imagePosition: "top",
   },
   {
-    id: "company-profile",
-    slug: "website-company-profile-modern-enterprise",
-    title: "Website Company Profile Modern Enterprise",
-    client: "YourCompany Global Tech",
-    category: "Company Profile",
+    id: "kopi-senja",
+    slug: "web-app-klinik-utama-indonesia",
+    title: "Klinik Utama Indonesia",
+    client: "Klinik Pratama & Utama Indonesia",
+    category: "Web App",
     duration: "2 Minggu",
     year: "2026",
     excerpt:
-      "Studi kasus website profil perusahaan korporat berarsitektur glass skyline oleh DickyWeb: multi-halaman interaktif, kapabilitas cloud & AI, artikel thought leadership, dan portal kemitraan B2B.",
+      "Studi kasus sistem web app manajemen klinik terpadu oleh DickyWeb: pendaftaran antrean digital real-time, rekam medis elektronik terintegrasi SATUSEHAT, dan reservasi dokter online.",
     description:
-      "Website profil korporasi modern berarsitektur glass skyline dengan showcase layanan komputasi awan, artikel thought leadership, dan portal kemitraan multi-halaman interaktif.",
+      "Sistem web app klinik terintegrasi untuk pendaftaran pasien online, antrean digital real-time, dan rekam medis elektronik yang aman dan cepat.",
     aboutProject:
-      "YourCompany adalah perusahaan penyedia infrastruktur komputasi awan dan rekayasa kecerdasan buatan skala enterprise. Klien membutuhkan website profil korporasi berstandar global yang mampu memproyeksikan reputasi tier-1 bagi para calon investor dan mitra strategis multinasional.",
+      "Klinik Utama Indonesia adalah fasilitas pelayanan kesehatan yang melayani rawat jalan dan poli spesialis. Klien membutuhkan transformasi sistem digital untuk memangkas waktu tunggu antrean fisik di lokasi dan mendokumentasikan data pasien secara efisien sesuai standar Kemenkes.",
     challenge:
-      "Menyajikan katalog solusi teknis yang kompleks (Cloud Hybrid, Enterprise AI, Cyber Defense) secara elegan dan mudah dipahami oleh eksekutif C-Level, serta menyediakan alur penjadwalan konsultasi arsitektur 30 menit yang praktis dan terintegrasi.",
+      "Mengurangi penumpukan antrean loket pendaftaran di pagi hari, mengamankan data riwayat rekam medis pasien dengan enkripsi tinggi, serta menghadirkan antarmuka registrasi pasien yang ramah lansia di layar smartphone.",
     solutions: [
-      "Arsitektur visual 'Corporate Tech Glass Skyline' dengan estetika modern, profesional, dan mewah",
-      "Struktur multi-halaman lengkap: Beranda, Tentang Kami, Layanan, Berita & Wawasan, Detail Artikel, Arsip Kategori, Kontak, dan Portal Konsultasi",
-      "Portal penjadwalan konsultasi teknologi 30 menit dengan opsi persetujuan kerahasiaan NDA",
-      "Mode preview interaktif multi-device (Desktop & App) untuk kemudahan presentasi klien",
-      "Optimasi SEO enterprise dan integrasi channel korespondensi prioritas 24/7",
+      "Sistem nomor antrean digital berbasis QR Code yang dapat dipantau langsung dari WhatsApp pasien",
+      "Modul Rekam Medis Elektronik (RME) standar SATUSEHAT dengan pencarian riwayat medis instan",
+      "Jadwal praktek dokter interaktif dengan filter spesialisasi dan kuota harian otomatis",
+      "Integrasi notifikasi pengingat jadwal konsultasi via WhatsApp otomatis",
+      "Dashboard analitik kunjungan pasien harian dan laporan farmasi bagi manajemen klinik",
     ],
     techDescription:
-      "Dikembangkan menggunakan Next.js App Router, Tailwind CSS, TypeScript, dan Framer Motion dengan rancangan sistem desain yang konsisten dan skalabel.",
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Cloud Architecture"],
-    metrics: "Meningkatkan kepercayaan & leads klien korporat hingga 240%",
+      "Dikembangkan menggunakan Next.js App Router, Tailwind CSS, TypeScript, dan PostgreSQL dengan enkripsi data medis tingkat tinggi.",
+    techStack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "PostgreSQL", "WhatsApp API"],
+    metrics: "Waktu tunggu antrean terpangkas 65%",
     results:
-      "Meningkatkan kepercayaan pemangku kepentingan korporat secara signifikan dengan kenaikan permintaan kemitraan B2B mencapai 240% dan apresiasi tinggi terhadap standar desain antarmuka.",
-    image:
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_home_page/screen.png",
+      "Mengurangi antrean fisik hingga 65% dan mendongkrak kepuasan pasien terhadap kecepatan layanan klinik hingga 95%.",
+    image: "/images/portfolio/medika-klinik.jpg",
     gallery: [
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_home_page/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_tentang_kami_about_us/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_layanan_solusi_digital/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_kabar_wawasan_terkini_news_insights/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_detail_artikel_mengakselerasi_adopsi_generative_ai_di_perbankan/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_arsip_kategori_teknologi_artificial_intelligence/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_hubungi_kami_contact_us/screen.png",
-      "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_get_in_touch_konsultasi_kemitraan_enterprise/screen.png",
+      "/images/portfolio/medika-klinik.jpg",
+      "/images/portfolio/hero/hero-3.jpg",
     ],
-    liveUrl: "/showcase/company-profile/stitch_modern_company_design_system/yourcompany_home_page/code.html",
-    detailUrl: "/portfolio/website-company-profile-modern-enterprise",
-    imageFit: "cover",
-    imagePosition: "top",
-  },
-  {
-    id: "kopi-senja",
-    slug: "website-toko-online-coffee-kenangan",
-    title: "Website Toko Online Coffee Kenangan",
-    client: "Coffee Kenangan Group",
-    category: "Toko Online",
-    duration: "10 Hari",
-    year: "2026",
-    excerpt:
-      "Studi kasus platform e-commerce pemesanan biji kopi premium & merchandise online oleh DickyWeb: integrasi payment gateway QRIS instan dan kurir kilat.",
-    description:
-      "Platform e-commerce & aplikasi pemesanan kopi online dengan integrasi checkout instan QRIS dan kurir kilat.",
-    aboutProject:
-      "Coffee Kenangan adalah brand ritel kopi modern yang berkembang pesat. Mereka membutuhkan toko online berkonversi tinggi untuk menjangkau penikmat kopi di seluruh Nusantara secara mandiri tanpa tergantung pada platform pihak ketiga.",
-    challenge:
-      "Menghadirkan pengalaman belanja online yang semudah menggunakan aplikasi ponsel, checkout kilat di bawah 60 detik dengan metode pembayaran QRIS otomatis, dan perhitungan ongkos kirim real-time ke berbagai kota.",
-    solutions: [
-      "Antarmuka katalog produk kopi dan merchandise dengan visual produk yang menggugah selera",
-      "Sistem checkout satu halaman (1-page checkout) dengan integrasi payment gateway QRIS dan Virtual Account",
-      "Sinkronisasi ongkir ekspedisi otomatis (JNE, SiCepat, J&T) langsung terhitung di halaman checkout",
-      "Dashboard pelacakan pesanan real-time bagi pembeli via notifikasi WhatsApp",
-    ],
-    techDescription:
-      "Dibangun dengan Next.js dan Tailwind CSS, terintegrasi dengan Payment Gateway Midtrans dan kurir otomatis.",
-    techStack: ["Next.js", "Payment Gateway", "Tailwind CSS", "TypeScript"],
-    metrics: "1,500+ transaksi di bulan pertama rilis",
-    results:
-      "Mencatat lebih dari 1,500 transaksi di bulan pertama peluncuran dengan tingkat keberhasilan pembayaran mencapai 98.4%.",
-    image: "/images/portfolio/kopi-senja.jpg",
-    gallery: ["/images/portfolio/kopi-senja.jpg"],
-    liveUrl: "https://kopikenangan.com",
-    detailUrl: "/portfolio/website-toko-online-coffee-kenangan",
-    imageFit: "cover",
-    imagePosition: "top",
-  },
-  {
-    id: "prospektif-saas",
-    slug: "website-landing-page-prospektif-sales-crm",
-    title: "Website Landing Page Prospektif Sales CRM",
-    client: "Prospektif Tech",
-    category: "Landing Page",
-    duration: "5 Hari",
-    year: "2026",
-    excerpt:
-      "Landing page bento-grid berorientasi konversi tinggi untuk startup SaaS B2B, dilengkapi video preview interaktif dan kalkulator ROI.",
-    description:
-      "Landing page bento-grid berorientasi konversi tinggi untuk startup SaaS B2B, dilengkapi video preview interaktif dan kalkulator estimasi ROI.",
-    aboutProject:
-      "Prospektif adalah platform software CRM modern untuk tim sales B2B. Mereka membutuhkan landing page yang mampu menjelaskan alur kerja software dalam sekali pandang dan mengubah trafik berbayar menjadi pendaftaran uji coba gratis.",
-    challenge:
-      "Menjelaskan fitur software yang kompleks menjadi visual bento-grid yang menarik, ringan dimuat, dan memiliki skor kecepatan tinggi untuk mendukung kampanye iklan digital.",
-    solutions: [
-      "Desain tata letak bento-grid modern dengan hierarki visual yang terarah",
-      "Kalkulator interaktif estimasi penghematan waktu dan ROI penggunaan CRM",
-      "Skor performa Google PageSpeed 98/100 dengan waktu muat di bawah 1.2 detik",
-      "Formulir registrasi free-trial instan yang langsung terhubung ke database",
-    ],
-    techDescription:
-      "Dikembangkan dengan React, Framer Motion, dan Tailwind CSS untuk performa maksimal dan micro-interactions yang memikat.",
-    techStack: ["React", "Framer Motion", "Tailwind CSS", "TypeScript"],
-    metrics: "Skor Google PageSpeed 98/100",
-    results:
-      "Meningkatkan conversion rate iklan digital hingga 4.8% dan menghasilkan lebih dari 450 sign-up uji coba gratis di minggu pertama.",
-    image: "/images/portfolio/prospektif-saas.jpg",
-    gallery: ["/images/portfolio/prospektif-saas.jpg"],
     liveUrl: "",
-    detailUrl: "/portfolio/website-landing-page-prospektif-sales-crm",
+    detailUrl: "/portfolio/web-app-klinik-utama-indonesia",
     imageFit: "cover",
     imagePosition: "top",
   },
   {
-    id: "medika-klinik",
-    slug: "website-medika-utama-aesthetic-clinic",
-    title: "Website Medika Utama Aesthetic Clinic",
-    client: "Medika Group",
-    category: "Company Profile",
+    id: "pt-cakrawala-logistik",
+    slug: "web-app-pupuk-indonesia-jaya",
+    title: "Web App Pupuk Indonesia Jaya",
+    client: "PT Pupuk Indonesia Jaya",
+    category: "Web App",
+    duration: "3 Minggu",
+    year: "2026",
+    excerpt:
+      "Studi kasus sistem web app logistik dan monitoring distribusi pupuk oleh DickyWeb: pelacakan stok multi-gudang real-time dan otomasi alokasi kuota petani binaan.",
+    description:
+      "Aplikasi manajemen logistik & distribusi rantai pasok pupuk dengan pemantauan stok multi-gudang dan pelaporan analitik otomatis.",
+    aboutProject:
+      "PT Pupuk Indonesia Jaya mengelola distribusi ribuan ton pupuk per bulan ke ratusan distributor dan kios resmi. Klien membutuhkan sistem manajemen rantai pasok terpusat untuk mencegah keterlambatan suplai ke petani pada musim tanam.",
+    challenge:
+      "Menyinkronkan data inventori fisik dari puluhan gudang di berbagai daerah secara real-time dengan konektivitas internet yang fluktuatif, serta mencegah selisih data surat jalan (delivery order).",
+    solutions: [
+      "Dashboard stok multi-warehouse dengan update inventori otomatis saat barang keluar-masuk",
+      "Fitur pelacakan armada truk distribusi dan validasi digital tanda terima pengiriman barang",
+      "Sistem alokasi kuota pupuk otomatis berdasarkan verifikasi kelompok tani binaan",
+      "Ekspor laporan mutasi barang dan analitik operasional otomatis format Excel & PDF",
+    ],
+    techDescription:
+      "Dibangun dengan Next.js dan Tailwind CSS, ditunjang arsitektur REST API berkecepatan tinggi serta sinkronisasi data terdistribusi.",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "REST API", "PostgreSQL"],
+    metrics: "Akurasi distribusi pupuk naik 99.2%",
+    results:
+      "Meniadakan selisih stok gudang hingga 99.2% dan mempercepat waktu penerbitan surat jalan dari 4 jam menjadi hanya 5 menit.",
+    image: "/images/portfolio/prospektif-saas.jpg",
+    gallery: [
+      "/images/portfolio/prospektif-saas.jpg",
+      "/images/portfolio/hero/hero-1.jpg",
+    ],
+    liveUrl: "",
+    detailUrl: "/portfolio/web-app-pupuk-indonesia-jaya",
+    imageFit: "contain",
+    imagePosition: "top",
+  },
+  {
+    id: "luxe-glow-clinic",
+    slug: "website-drive-max-sewa-mobil",
+    title: "Drive Max Sewa Mobil",
+    client: "Drive Max Rental Fleet",
+    category: "WEBSITE",
     duration: "1 Minggu",
     year: "2026",
     excerpt:
-      "Studi kasus website estetika medis modern Medika Utama oleh DickyWeb: integrasi kalender reservasi dokter dan katalog perawatan kulit premium.",
+      "Studi kasus website rental armada mobil profesional oleh DickyWeb: katalog kendaraan lengkap, kalkulator tarif sewa transparan, dan booking instan via WhatsApp.",
     description:
-      "Website estetika medis modern dengan integrasi kalender reservasi janji temu dokter spesialis dan katalog perawatan kulit.",
+      "Website rental & sewa mobil premium dengan katalog unit lengkap, kalender ketersediaan armada, dan pemesanan cepat via WhatsApp.",
     aboutProject:
-      "Medika Utama Aesthetic Clinic adalah klinik perawatan kulit dan estetika terkemuka. Mereka membutuhkan website profil yang memancarkan kesan higienis, terpercaya, dan mempermudah reservasi jadwal konsultasi dokter spesialis.",
+      "Drive Max adalah penyedia layanan rental mobil premium untuk keperluan bisnis, pariwisata, dan sewa harian/bulanan. Mereka membutuhkan website profil armada yang meyakinkan untuk memenangkan pasar korporat dan wisatawan.",
     challenge:
-      "Membuat alur booking jadwal dokter yang fleksibel bagi pasien, menampilkan katalog perawatan sebelum-sesudah (*before-after*) secara etis, dan menghubungkan layanan langsung ke concierge WhatsApp.",
+      "Menampilkan pilihan kendaraan (MPV, SUV, Luxury) dengan spesifikasi dan paket harga yang jelas, serta mengonversi pengunjung menjadi pemesanan instan tanpa formulir rumit.",
     solutions: [
-      "Katalog perawatan dermatologi terstruktur dengan rincian durasi dan manfaat klinis",
-      "Sistem booking reservasi janji temu dokter online dengan konfirmasi WhatsApp instan",
-      "Profil tim dokter spesialis lengkap dengan jadwal praktek real-time",
-      "Desain bertema soft clinical luxury yang menenangkan dan ramah pengguna",
+      "Katalog armada interaktif dengan filter transmisi, kapasitas penumpang, dan paket lepas kunci/dengan sopir",
+      "Kalkulator estimasi biaya sewa berdasarkan durasi hari dan opsi tambahan asuransi",
+      "Tombol 'Booking Cepat' yang menyusun format pesan WhatsApp terstruktur ke admin customer service",
+      "Optimasi SEO lokal untuk kata kunci pencarian rental mobil terpercaya",
     ],
     techDescription:
-      "Next.js App Router, Tailwind CSS, dan integrasi WhatsApp API untuk reservasi langsung.",
-    techStack: ["Next.js", "Tailwind CSS", "TypeScript", "WhatsApp API"],
-    metrics: "Booking janji temu online meningkat 180%",
+      "Next.js App Router dengan Tailwind CSS dan Framer Motion untuk showcase armada yang interaktif dan memikat calon penyewa.",
+    techStack: ["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "WhatsApp API"],
+    metrics: "Reservasi armada meningkat 210%",
     results:
-      "Meningkatkan reservasi jadwal dokter secara online sebesar 180% dan memangkas waktu tunggu antrean di klinik secara efektif.",
-    image: "/images/portfolio/medika-klinik.jpg",
-    gallery: ["/images/portfolio/medika-klinik.jpg"],
+      "Meningkatkan konversi pemesanan armada rental sebesar 210% dan memangkas waktu tanya-jawab spesifikasi mobil hingga 70%.",
+    image: "/images/portfolio/hero/hero-2.jpg",
+    gallery: [
+      "/images/portfolio/hero/hero-2.jpg",
+      "/images/portfolio/hero/hero-4.jpg",
+    ],
     liveUrl: "",
-    detailUrl: "/portfolio/website-medika-utama-aesthetic-clinic",
+    detailUrl: "/portfolio/website-drive-max-sewa-mobil",
+    imageFit: "cover",
+    imagePosition: "top",
+  },
+  {
+    id: "arjuna-property",
+    slug: "toko-online-fresh-mart-organik",
+    title: "Fresh Mart Toko Online",
+    client: "Fresh Mart Organik Indonesia",
+    category: "Toko Online",
+    duration: "2 Minggu",
+    year: "2026",
+    excerpt:
+      "Studi kasus toko online bahan pangan segar & organik oleh DickyWeb: keranjang belanja instan, pilihan jadwal antar harian, dan pembayaran multi-channel.",
+    description:
+      "Platform e-commerce groceries belanja kebutuhan dapur harian, sayur buah segar dengan pengiriman terjadwal dan integrasi payment gateway.",
+    aboutProject:
+      "Fresh Mart adalah supermarket modern penyedia bahan makanan organik langsung dari petani lokal. Klien membutuhkan platform belanja online agar pelanggan perumahan dapat berbelanja sayur dan buah segar dari rumah setiap pagi.",
+    challenge:
+      "Memastikan proses checkout sesederhana mungkin bagi ibu rumah tangga, menyediakan slot waktu pengiriman same-day (pagi & sore), dan mengelola update stok produk segar harian.",
+    solutions: [
+      "Antarmuka katalog produk segar yang bersih dan visual segar dengan kategori terorganisir",
+      "Keranjang belanja mengambang (sticky cart) dengan rekap total harga instan",
+      "Pilihan slot jadwal pengiriman (Pagi: 06.00-09.00 / Sore: 16.00-19.00)",
+      "Integrasi QRIS instan dan transfer bank otomatis tanpa perlu kirim bukti transfer manual",
+    ],
+    techDescription:
+      "Dibangun dengan React, Next.js, dan Tailwind CSS, dipadukan dengan gateway pembayaran instan dan sistem notifikasi pesanan.",
+    techStack: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Payment Gateway"],
+    metrics: "Pesanan harian melonjak 340%",
+    results:
+      "Berhasil memproses lebih dari 400 pesanan bahan pangan setiap minggunya dengan tingkat repeat-order mencapai 78%.",
+    image: "/images/portfolio/aurora-law.jpg",
+    gallery: [
+      "/images/portfolio/aurora-law.jpg",
+      "/images/portfolio/hero/hero-4.jpg",
+    ],
+    liveUrl: "",
+    detailUrl: "/portfolio/toko-online-fresh-mart-organik",
+    imageFit: "contain",
+    imagePosition: "top",
+  },
+  {
+    id: "sistem-hr-solusindo",
+    slug: "web-app-top-up-game-terpercaya",
+    title: "Top Up Game Termurah Dan Terpercaya",
+    client: "GameZone Top Up Indonesia",
+    category: "Web App",
+    duration: "2 Minggu",
+    year: "2026",
+    excerpt:
+      "Studi kasus web app top-up voucher game otomatis 24 jam oleh DickyWeb: verifikasi User ID game instan, checkout QRIS otomatis, dan transaksi sukses di bawah 10 detik.",
+    description:
+      "Web app top up game kilat hitungan detik untuk Mobile Legends, Free Fire, Valorant, dan PUBG dengan gerbang pembayaran QRIS otomatis.",
+    aboutProject:
+      "GameZone adalah portal top up voucher game populer bagi komunitas gamer Indonesia. Klien membutuhkan platform transaksi otomatis yang beroperasi 24/7 tanpa henti dengan kecepatan delivery diamond/kredit dalam hitungan detik.",
+    challenge:
+      "Menangani lonjakan ribuan transaksi saat event turnamen/diskon game, validasi User ID & Server ID game secara real-time agar tidak salah kirim, serta proses pembayaran otomatis tanpa admin manual.",
+    solutions: [
+      "Katalog game populer lengkap (Mobile Legends, Free Fire, Genshin Impact, Valorant, PUBG)",
+      "Pengecekan username in-game otomatis secara real-time sebelum pembayaran dilakukan",
+      "Penyelesaian pembayaran otomatis menggunakan QRIS Dinamis dan E-Wallet",
+      "Pengiriman voucher / diamond game otomatis langsung masuk ke akun player dalam 5-10 detik",
+    ],
+    techDescription:
+      "Next.js App Router performa tinggi dengan caching teroptimasi, REST API payment gateway berkecepatan tinggi, dan arsitektur anti-delay.",
+    techStack: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Payment Gateway API"],
+    metrics: "Waktu transaksi otomatis < 10 detik",
+    results:
+      "Tingkat keberhasilan transaksi otomatis mencapai 99.8% dengan rata-rata waktu proses hanya 7 detik, melayani lebih dari 10.000 transaksi per bulan.",
+    image: "/images/portfolio/prospektif-saas.jpg",
+    gallery: [
+      "/images/portfolio/prospektif-saas.jpg",
+      "/images/portfolio/hero/hero-3.jpg",
+    ],
+    liveUrl: "",
+    detailUrl: "/portfolio/web-app-top-up-game-terpercaya",
     imageFit: "cover",
     imagePosition: "top",
   },
